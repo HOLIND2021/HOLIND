@@ -9,12 +9,12 @@ class App extends Component {
 
   componentDidMount() {
     this.backendTest()
-      .then(res => this.setState({ data: res.express }))
+      .then(res => this.setState({ data: res.body }))
       .catch(err => console.log(err));
   }
 
   backendTest = async () => {
-    const res = await fetch('/express_backend');
+    const res = await fetch('/api/apiTest');
     const body = await res.json();
 
     if (res.status !== 200) {

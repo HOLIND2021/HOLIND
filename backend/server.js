@@ -1,12 +1,25 @@
 const express = require('express');
+const cors = require('cors');
 
+// Setting up the main server app
 const app = express();
 const port = process.env.PORT || 5000;
 
-// create a GET route
-app.get('/express_backend', (req, res) => {
-  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
+// Prints incoming server requests to the console
+app.use((req, res, next) => {
+    console.log(`Request_Endpoint: ${req.method} ${req.url}`);
+    next();
 });
+
+// Configure middleware
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
+app.use(cors());
+
+// Require Route
+const api = require('./routes/routes');
+// Configure app to use route
+app.use('/api', api);
 
 // Catch any bad requests
 app.get('*', (req, res) => {
