@@ -2,6 +2,8 @@
 
 ## Getting Started
 
+#### Run `npm install` in the main directory, the frontend folder, and the backend folder.
+
 ### Available Scripts
 
 In the project directory, you can run:
