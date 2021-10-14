@@ -14,9 +14,19 @@ class LoginPage extends Component {
       return (
   
         <div>
-            Hi Lol
-
-            
+            <h2>HOLIND</h2>
+            <form>
+              <label>Username <br></br>
+                <input type="text" name="username"/>
+              </label>
+              <br></br>
+              <label>Password <br></br>
+                <input type="text" name="username"/>
+              </label>
+              <br></br>
+              <button type="submit" >Sign In</button>
+              <button type="submit">Sign Up</button>
+            </form>
         </div>
         
       );

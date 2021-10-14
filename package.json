@@ -21,6 +21,7 @@
   "homepage": "https://github.com/HOLIND2021/HOLIND#readme",
   "dependencies": {
     "concurrently": "^6.3.0",
-    "nodemon": "^2.0.13"
+    "nodemon": "^2.0.13",
+    "react-router-dom": "^5.3.0"
   }
 }
