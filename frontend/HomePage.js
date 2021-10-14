@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class LoginPage extends Component {
+class HomePage extends Component {
     state = {
       data: null
     }
@@ -15,12 +15,10 @@ class LoginPage extends Component {
   
         <div>
             Hi Lol
-
-            
         </div>
         
       );
     }
   }
   
-  export default LoginPage;
+  export default HomePage;
