@@ -1,11 +1,10 @@
-/*const firebase = require("firebase/app");
-require("firebase/firestore")
-require("firebase/auth")
+const firebase = require("firebase/app");
+const auth = require("firebase/auth");
+const database = require("firebase/database");
 
 const firebaseConfig = {
     apiKey: process.env.apiKey,
     authDomain: process.env.authDomain,
-    databaseURL: process.env.databaseURL,
     projectId: process.env.projectId,
     storageBucket: process.env.storageBucket,
     messagingSenderId: process.env.messagingSenderId,
@@ -13,17 +12,31 @@ const firebaseConfig = {
     measurementId: process.env.measurementId
 };
 
-firebase.initializeApp(firebaseConfig);
-firebase.auth().signInWithEmailAndPassword(process.env.FIREBASE_USER, process.env.FIREBASE_PASS)
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const getAuth = auth.getAuth();
+const db = database.getDatabase(app);
+
+auth.signInWithEmailAndPassword(getAuth, process.env.FIREBASE_USER, process.env.FIREBASE_PASS)
     .then(user => {
         console.log('Signed into firebase')
     }).catch(error => {
         console.log(error)
     })
-const db = firebase.firestore()
-*/
+    
+const dbRef = database.ref(db);
+
 exports.apiTest = async (req, res, next) => {
-    res.status(200).json({
-        body: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT'
+    database.get(database.child(dbRef, `test`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            console.log(snapshot.val());
+            res.status(200).json({
+                body: snapshot.val()
+            });
+        } else {
+            console.log("No data available");
+        }
+    }).catch((error) => {
+        console.error(error);
     });
 };
