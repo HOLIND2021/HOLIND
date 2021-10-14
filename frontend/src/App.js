@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import LoginPage from './LoginPage';
+import Navbar from './components/Navbar';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Messages from './pages/Messages';
 
 class App extends Component {
   state = {
@@ -27,9 +31,15 @@ class App extends Component {
 
   render() {
     return (
-
-      <LoginPage/>
-      
+      <>
+        <Router>
+          <Navbar />
+          <Switch>
+            <Route path='/' exact component={Home} />
+            <Route path='/messages' component={Messages} />
+          </Switch>
+        </Router>
+      </>
     );
   }
 }
