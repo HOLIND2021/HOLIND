@@ -18,6 +18,8 @@
     height: 100vh;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
+    margin-top: 20px;
     position: fixed;
     top: 0;
     left: -100%;
