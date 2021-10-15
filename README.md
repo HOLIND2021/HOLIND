@@ -34,6 +34,6 @@ Login to heroku using the heroku CLI. Must have the heroku CLI downloaded. [http
 
 (Only needed once) Set the github repository as the remote for the heroku repository.
 
-#### `git push heroku ``git subtree split --prefix backend main``:main --force`
+#### ``git push heroku `git subtree split --prefix backend main`:main --force``
 
 Deploy backend to heroku.
