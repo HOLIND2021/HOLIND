@@ -23,3 +23,17 @@ Runs the backend server on port 5000 using nodemon.
 #### `npm run dev`
 
 Runs the frontend and backend at the same time using concurrently.
+
+### Heroku Deployment
+
+#### `heroku login`
+
+Login to heroku using the heroku CLI. Must have the heroku CLI downloaded. [https://devcenter.heroku.com/articles/heroku-cli](https://devcenter.heroku.com/articles/heroku-cli)
+
+#### `heroku git:remote -a holind`
+
+(Only needed once) Set the github repository as the remote for the heroku repository.
+
+#### `git push heroku `git subtree split --prefix backend main`:main --force`
+
+Deploy backend to heroku.
