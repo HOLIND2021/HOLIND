@@ -1,7 +1,6 @@
-const firebase = require("firebase/app");
-const auth = require("firebase/auth");
-const database = require("firebase/database");
-
+const { initializeApp } = require("firebase/app");
+const { getAuth, signInWithEmailAndPassword } = require("firebase/auth");
+const { getFirestore, collection, doc, getDoc } = require("firebase/firestore");
 const firebaseConfig = {
     apiKey: process.env.apiKey,
     authDomain: process.env.authDomain,
@@ -13,30 +12,28 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const getAuth = auth.getAuth();
-const db = database.getDatabase(app);
+initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore();
 
-auth.signInWithEmailAndPassword(getAuth, process.env.FIREBASE_USER, process.env.FIREBASE_PASS)
+signInWithEmailAndPassword(auth, process.env.FIREBASE_USER, process.env.FIREBASE_PASS)
     .then(user => {
         console.log('Signed into firebase')
     }).catch(error => {
         console.log(error)
     })
-    
-const dbRef = database.ref(db);
 
 exports.apiTest = async (req, res, next) => {
-    database.get(database.child(dbRef, `test`)).then((snapshot) => {
-        if (snapshot.exists()) {
-            console.log(snapshot.val());
-            res.status(200).json({
-                body: snapshot.val()
-            });
-        } else {
-            console.log("No data available");
-        }
-    }).catch((error) => {
-        console.error(error);
-    });
+    const docRef = doc(db, "test", "test document");
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        res.status(200).json({
+            body: docSnap.data()
+        });
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+    }
 };
