@@ -37,3 +37,13 @@ Login to heroku using the heroku CLI. Must have the heroku CLI downloaded. [http
 #### ``git push heroku `git subtree split --prefix backend main`:main --force``
 
 Deploy backend to heroku.
+
+### Firebase Deployment
+
+#### `firebase login`
+
+Login to firebase using the firebase CLI. Must have the firebase CLI installed. [https://firebase.google.com/docs/cli?authuser=0#install_the_firebase_cli](https://firebase.google.com/docs/cli?authuser=0#install_the_firebase_cli)
+
+#### (In the frontend folder) `firebase deploy`
+
+Deploy the frontend to firebase.
