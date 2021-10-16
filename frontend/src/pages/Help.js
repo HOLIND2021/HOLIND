@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Messages extends Component {
+class Help extends Component {
     state = {
       data: null
     }
@@ -13,12 +13,12 @@ class Messages extends Component {
     render() {
       return (
   
-        <div className='messages'>
-            <h1>Messages</h1>
+        <div className='help'>
+            <h1>Help</h1>
         </div>
         
       );
     }
   }
   
-  export default Messages;
+  export default Help;

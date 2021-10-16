@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Messages extends Component {
+class Patients extends Component {
     state = {
       data: null
     }
@@ -13,12 +13,12 @@ class Messages extends Component {
     render() {
       return (
   
-        <div className='messages'>
-            <h1>Messages</h1>
+        <div className='patients'>
+            <h1>Patients</h1>
         </div>
         
       );
     }
   }
   
-  export default Messages;
+  export default Patients;
