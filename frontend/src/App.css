@@ -4,13 +4,15 @@
   padding: 0;
 }
 
-.home,
 .messages,
 .patients,
 .help {
-  display: flex;
   height: 90vh;
-  align-items: center;
-  justify-content: center;
   font-size: 3rem;
+  text-align: center;
+}
+
+.home {
+  text-align: center;
+  margin-top: 40px;
 }
