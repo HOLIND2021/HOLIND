@@ -44,6 +44,10 @@ Deploy backend to heroku.
 
 Login to firebase using the firebase CLI. Must have the firebase CLI installed. [https://firebase.google.com/docs/cli?authuser=0#install_the_firebase_cli](https://firebase.google.com/docs/cli?authuser=0#install_the_firebase_cli)
 
+#### (In the frontend folder) `npm run build`
+
+Create the react optimized production build folder to be deployed.
+
 #### (In the frontend folder) `firebase deploy`
 
 Deploy the frontend to firebase.
