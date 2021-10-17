@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import * as CgIcons from 'react-icons/cg';
 
 class Patients extends Component {
     state = {
-      data: null
+      data: []
     }
   
     componentDidMount() {
@@ -22,9 +23,16 @@ class Patients extends Component {
     }
   
     render() {
+
       return (
         <div className='patients'>
-            <h1>Patients</h1>
+            <h1 style={{ margin: "10px", padding: "10px"}}>Patients</h1>
+
+            <div style={{}}>
+              <div>{this.state.data.map((patient) => (
+                  <div style={{ fontSize: "1.2em", margin: "10px", padding: "10px"}}>{patient.first} {patient.last}</div>
+              ))}</div>
+            </div>
         </div>
         
       );
