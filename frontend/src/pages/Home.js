@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Home.css';
 
 class Home extends Component {
     state = {
@@ -37,7 +38,7 @@ class Home extends Component {
       } else {
         greeting = "Good evening"
       }
-
+      let x = {fontSize: '30px', paddingRight: '10px'}
       return (
   
         <div className='home'>
@@ -47,9 +48,32 @@ class Home extends Component {
             <h1>
               {greeting}, User
             </h1>
-        </div>
+
+      
+      
+  
         
-      );
+            <div className='box'>
+              <h5>Today's Date</h5><br></br>
+              <h4>Good afternoon, [Name]</h4><br></br>
+              <h5>My Patient's Treatments</h5><br></br>
+              <table>
+                <tr>
+                  <th style = {x}>Upcoming</th>
+                  <th style = {x}>Overdue</th>
+                  <th style = {x}>Completed</th>
+                </tr>
+                <tr>
+                  <td>Long Le</td>
+                </tr>
+                <tr>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+        </div>
+      );  
+      
     }
   }
   
