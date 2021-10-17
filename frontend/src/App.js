@@ -6,7 +6,8 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Messages from './pages/Messages';
 import Patients from './pages/Patients';
-import Help from './pages/Help'
+import Help from './pages/Help';
+import Patient from './pages/Patient'
 
 class App extends Component {
   state = {
@@ -41,6 +42,7 @@ class App extends Component {
             <Route path='/patients' component={Patients} />
             <Route path='/messages' component={Messages} />
             <Route path='/help' component={Help} />
+            <Route path='/patient' component={Patient} />
           </Switch>
         </Router>
       </>
