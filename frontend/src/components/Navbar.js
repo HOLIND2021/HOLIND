@@ -16,7 +16,7 @@ function Navbar() {
                 <Link to='#' className='menu-bars'>
                     <FaIcons.FaBars onClick={showSidebar}/>
                 </Link>
-                <h1 style={{ color: "white", display: "block", margin: "auto", paddingRight: "50px" }}>HOLIND</h1>
+                <h1 style={{ display: "block", margin: "auto", paddingRight: "50px" }}><a href="../Home" style={{ color: "white", textDecoration: "none" }}>HOLIND</a></h1>
             </div>
             <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
                 <ul className='nav-menu-items' onClick={showSidebar}>
