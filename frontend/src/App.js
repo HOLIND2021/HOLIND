@@ -20,7 +20,7 @@ class App extends Component {
   }
 
   backendTest = async () => {
-    const res = await fetch('/api/apiTest');
+    const res = await fetch(`${process.env.REACT_APP_API}/api/apiTest`);
     const body = await res.json();
 
     if (res.status !== 200) {
