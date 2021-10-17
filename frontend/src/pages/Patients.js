@@ -6,13 +6,23 @@ class Patients extends Component {
     }
   
     componentDidMount() {
-      // what to do if component was mounted??
+      this.getPatients()
+        .then(res => this.setState({ data: res.body }))
+        .catch(err => console.log(err));
     }
   
+    getPatients = async () => {
+      const res = await fetch('/api/patients');
+      const body = await res.json();
+
+      if (res.status !== 200) {
+        throw Error(body.message)
+      }
+      return body;
+    }
   
     render() {
       return (
-  
         <div className='patients'>
             <h1>Patients</h1>
         </div>
@@ -21,4 +31,5 @@ class Patients extends Component {
     }
   }
   
+
   export default Patients;

@@ -37,3 +37,22 @@ exports.apiTest = async (req, res, next) => {
         console.log("No such document!");
     }
 };
+
+exports.patients = async (req, res, next) => {
+    const patientsRef = collection('patients');
+    const snapshot = await patientsRef.get()
+    if (snapshot.empty) {
+        res.status(404).json({
+            message: 'Patients not found'
+        })
+        return
+    }
+    let patientsArray = [];
+    snapshot.forEach(patient => {
+        patientsArray.push(patient.data())
+    });
+    console.log("Patients found");
+    res.status(200).json({
+        patientsArray
+    });
+}
