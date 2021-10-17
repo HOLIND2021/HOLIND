@@ -19,7 +19,7 @@ class Patients extends Component {
     }
   
     getPatients = async () => {
-      const res = await fetch('/api/patients');
+      const res = await fetch(`${process.env.REACT_APP_API}/api/patients`);
       const body = await res.json();
 
       if (res.status !== 200) {
