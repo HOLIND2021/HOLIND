@@ -1,6 +1,6 @@
 const { initializeApp } = require("firebase/app");
 const { getAuth, signInWithEmailAndPassword } = require("firebase/auth");
-const { getFirestore, collection, doc, getDoc } = require("firebase/firestore");
+const { getFirestore, collection, doc, getDoc, query, getDocs } = require("firebase/firestore");
 const firebaseConfig = {
     apiKey: process.env.apiKey,
     authDomain: process.env.authDomain,
@@ -39,20 +39,19 @@ exports.apiTest = async (req, res, next) => {
 };
 
 exports.patients = async (req, res, next) => {
-    const patientsRef = collection('patients');
-    const snapshot = await patientsRef.get()
-    if (snapshot.empty) {
+    const q = query(collection(db, "patients"));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
         res.status(404).json({
-            message: 'Patients not found'
+            message: "Patients not found"
         })
         return
     }
-    let patientsArray = [];
-    snapshot.forEach(patient => {
-        patientsArray.push(patient.data())
-    });
-    console.log("Patients found");
+    let patientArray = [];
+    querySnapshot.forEach((doc) => {
+        patientArray.push(doc.data());
+    })
     res.status(200).json({
-        patientsArray
+        body: patientArray
     });
 }
