@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
-import * as CgIcons from 'react-icons/cg';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 class Patients extends Component {
     state = {
@@ -26,13 +32,30 @@ class Patients extends Component {
 
       return (
         <div className='patients'>
-            <h1 style={{ margin: "10px", padding: "10px"}}>Patients</h1>
-
-            <div style={{}}>
-              <div>{this.state.data.map((patient) => (
-                  <div style={{ fontSize: "1.2em", margin: "10px", padding: "10px"}}>{patient.first} {patient.last}</div>
-              ))}</div>
-            </div>
+            <h1 style={{ paddingBottom: "20px" }}>Patients</h1>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell align="right">Status</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {this.state.data.map((patient) => (
+                    <TableRow
+                      key={patient.first}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {patient.first} {patient.last}
+                      </TableCell>
+                      <TableCell align="right">{patient.status}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
         </div>
         
       );
