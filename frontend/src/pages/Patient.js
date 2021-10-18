@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom'
 
 class Patient extends Component {
     state = {
-        exercises: {},
+        exercises: [],
         first: "",
         last: "",
         status: ""
@@ -13,6 +13,7 @@ class Patient extends Component {
 
     componentDidMount() {
         const { state } = this.props.location;
+        
         this.setState({
             exercises: state.exercises,
             first: state.first,
@@ -25,6 +26,9 @@ class Patient extends Component {
         return (
         <div className='patient'>
             {this.state.first}
+            <p>{this.state.exercises.map((exercise) => {
+                return exercise.name + ' ' + exercise.status
+            })}</p>
         </div>
         );
     }
