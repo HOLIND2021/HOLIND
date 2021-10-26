@@ -37,6 +37,7 @@ class App extends Component {
           <Navbar />
           <Switch>
             <Route path='/' exact component={LoginPage} />
+            <Route path='/login' component={LoginPage} />
             <Route path='/home' component={Home} />
             <Route path='/patients' component={Patients} />
             <Route path='/messages' component={Messages} />

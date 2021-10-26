@@ -41,7 +41,7 @@ export default function LoginPage() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs" sx={{paddingTop: "100px"}}>
+      <Container component="main" maxWidth="xs" sx={{paddingTop: "50px"}}>
         <CssBaseline />
         <Box
           sx={{
