@@ -8,6 +8,7 @@ import { IconContext } from 'react-icons';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 
 function Navbar() {
     const [sidebar, setSidebar] = useState(false);
@@ -31,7 +32,7 @@ function Navbar() {
                 <Link to='#' className='menu-bars'>
                     <FaIcons.FaBars onClick={showSidebar}/>
                 </Link>
-                <h1 style={{ display: "block", margin: "auto" }}><a href="../Home" style={{ color: "white", textDecoration: "none" }}>HOLIND</a></h1>
+                <Typography variant="h4" fontWeight="bold" style={{ display: "block", margin: "auto" }}><a href="../Home" style={{ color: "white", textDecoration: "none" }}>HOLIND</a></Typography>
                 <div>
                     <Button
                         id="basic-button"
