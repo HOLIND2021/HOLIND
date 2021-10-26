@@ -44,6 +44,8 @@ class Home extends Component {
       greeting = "Good evening"
     }
 
+    let userRole = 'patient';
+
     return (
 
       <div className='home'>
@@ -55,7 +57,7 @@ class Home extends Component {
         </Typography>
         <br></br>
         <br></br>
-        <Typography variant="h4" fontWeight="bold">My Patient's Treatments</Typography><br></br>
+        <Typography variant="h4" fontWeight="bold">{userRole === 'clinical' ? `My Patient's Treatments` : userRole === 'patient' ? `My Tasks` : ''}</Typography><br></br>
         <Tabs data={this.state.data}></Tabs>
       </div>
     );
