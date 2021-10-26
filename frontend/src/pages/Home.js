@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Home.css';
 import Tabs from '../components/Tabs';
+import Typography from '@mui/material/Typography';
 
 class Home extends Component {
   state = {
@@ -46,16 +47,16 @@ class Home extends Component {
     return (
 
       <div className='home'>
-        <h3 class='date'>
+        <Typography variant="h5">
           {day}, {month} {currentDate}
-        </h3>
-        <h1>
+        </Typography>
+        <Typography variant="h4">
           {greeting}, User
-        </h1>
+        </Typography>
         <br></br>
         <br></br>
-        <h2>My Patient's Treatments</h2><br></br>
-        <Tabs></Tabs>
+        <Typography variant="h4" fontWeight="bold">My Patient's Treatments</Typography><br></br>
+        <Tabs data={this.state.data}></Tabs>
       </div>
     );
   }

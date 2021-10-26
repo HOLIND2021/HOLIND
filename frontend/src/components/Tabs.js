@@ -45,78 +45,91 @@ function a11yProps(index) {
   };
 }
 
-export default function BasicTabs() {
+export default function BasicTabs({ data }) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  let upcoming = data.filter((patient) => patient.status === 'Upcoming');
+  let overdue = data.filter((patient) => patient.status === 'Overdue');
+  let completed = data.filter((patient) => patient.status === 'Completed');
+
   return (
-    <Box sx={{ width: '40%', position: 'absolute', left: '50%', top: '30%', transform: 'translate(-50%, -50%)' }}>
+    <Box sx={{ width: '35em', marginLeft: 'auto', marginRight: 'auto' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange}>
-          <Tab label="Upcoming" {...a11yProps(0)} sx={{ marginLeft: '20px' }} />
-          <Tab label="Overdue" {...a11yProps(1)} sx={{ marginLeft: '20px' }} />
-          <Tab label="Completed" {...a11yProps(2)} sx={{ marginLeft: '20px' }} />
+        <Tabs value={value} onChange={handleChange} centered>
+          <Tab label={<p style={{ marginLeft: '30px' }}>Upcoming</p>} {...a11yProps(0)} sx={{ marginRight: '30px' }} />
+          <Tab label={<p style={{ marginLeft: '30px' }}>Overdue</p>} {...a11yProps(1)} sx={{ marginRight: '30px' }} />
+          <Tab label={<p style={{ marginLeft: '30px' }}>Completed</p>} {...a11yProps(2)} sx={{ marginRight: '30px' }} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  Long Le
-                </TableCell>
-              </TableRow>
+              {upcoming.map((patient) => (
+                <TableRow
+                  key={patient.first}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {patient.first} {patient.last}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
       </TabPanel>
       <TabPanel value={value} index={1}>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  Kevin Lu
-                </TableCell>
-              </TableRow>
+              {overdue.map((patient) => (
+                <TableRow
+                  key={patient.first}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {patient.first} {patient.last}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
       </TabPanel>
       <TabPanel value={value} index={2}>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  Brianna Li
-                </TableCell>
-              </TableRow>
+              {completed.map((patient) => (
+                <TableRow
+                  key={patient.first}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {patient.first} {patient.last}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
