@@ -39,22 +39,13 @@ class Patient extends Component {
         });
     }
 
-    render() {
-
-        let recentlyAssigned = [];
-        let doToday = [];
-        let doWeek = [];
-        this.state.exercises.map((exercise) => {
-            
-        })
+    render() {    
+        
+        const category_text = {
+            fontWeight: "bold"
+        };
 
         return (
-        // <div className='patient'>
-        //     {this.state.first}
-        //     <p>{this.state.exercises.map((exercise) => {
-        //         return exercise.name + ' ' + exercise.status
-        //     })}</p>
-        // </div>
             <div className='patient'>
                 <Typography variant="h4">
                     {this.state.first}
@@ -66,7 +57,7 @@ class Patient extends Component {
                     >
 
                     <ListItemButton onClick={() => this.setState({ open1: !this.state.open1 })}>
-                        <ListItemText primary="Recently Assigned" />
+                        <ListItemText primaryTypographyProps={{ style: category_text }} primary="Recently Assigned" />
                         {this.state.open1 ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
                     <Collapse in={this.state.open1} timeout="auto" unmountOnExit>
@@ -82,7 +73,7 @@ class Patient extends Component {
                     </Collapse>
 
                     <ListItemButton onClick={() => this.setState({ open2: !this.state.open2 })}>
-                        <ListItemText primary="Do Today" />
+                        <ListItemText primaryTypographyProps={{ style: category_text }} primary="Do Today" />
                         {this.state.open2 ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
                     <Collapse in={this.state.open2} timeout="auto" unmountOnExit>
@@ -98,7 +89,7 @@ class Patient extends Component {
                     </Collapse>
 
                     <ListItemButton onClick={() => this.setState({ open3: !this.state.open3 })}>
-                        <ListItemText primary="Do Next Week" />
+                        <ListItemText primaryTypographyProps={{ style: category_text }} primary="Do Next Week" />
                         {this.state.open3 ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
                     <Collapse in={this.state.open3} timeout="auto" unmountOnExit>
@@ -114,7 +105,7 @@ class Patient extends Component {
                     </Collapse>
 
                     <ListItemButton onClick={() => this.setState({ open4: !this.state.open4 })}>
-                        <ListItemText primary="Do Later" />
+                        <ListItemText primaryTypographyProps={{ style: category_text }} primary="Do Later" />
                         {this.state.open4 ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
                     <Collapse in={this.state.open4} timeout="auto" unmountOnExit>
