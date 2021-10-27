@@ -41,6 +41,13 @@ class Patient extends Component {
 
     render() {
 
+        let recentlyAssigned = [];
+        let doToday = [];
+        let doWeek = [];
+        this.state.exercises.map((exercise) => {
+            
+        })
+
         return (
         // <div className='patient'>
         //     {this.state.first}
@@ -64,9 +71,13 @@ class Patient extends Component {
                     </ListItemButton>
                     <Collapse in={this.state.open1} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }}>
-                            <ListItemText primary="Starred" />
-                        </ListItemButton>
+                        {this.state.exercises.map((exercise) => {
+                            if (exercise.status === "recently_assigned") {
+                                return <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemText primary={exercise.name} />
+                                    </ListItemButton>
+                                }
+                            })}
                         </List>
                     </Collapse>
 
@@ -76,9 +87,13 @@ class Patient extends Component {
                     </ListItemButton>
                     <Collapse in={this.state.open2} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }}>
-                            <ListItemText primary="Starred" />
-                        </ListItemButton>
+                        {this.state.exercises.map((exercise) => {
+                            if (exercise.status === "do_today") {
+                                return <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemText primary={exercise.name} />
+                                    </ListItemButton>
+                                }
+                            })}
                         </List>
                     </Collapse>
 
@@ -88,9 +103,13 @@ class Patient extends Component {
                     </ListItemButton>
                     <Collapse in={this.state.open3} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }}>
-                            <ListItemText primary="Starred" />
-                        </ListItemButton>
+                        {this.state.exercises.map((exercise) => {
+                            if (exercise.status === "do_nextweek") {
+                                return <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemText primary={exercise.name} />
+                                    </ListItemButton>
+                                }
+                            })}
                         </List>
                     </Collapse>
 
@@ -100,9 +119,13 @@ class Patient extends Component {
                     </ListItemButton>
                     <Collapse in={this.state.open4} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }}>
-                            <ListItemText primary="Starred" />
-                        </ListItemButton>
+                        {this.state.exercises.map((exercise) => {
+                            if (exercise.status === "do_later") {
+                                return <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemText primary={exercise.name} />
+                                    </ListItemButton>
+                                }
+                            })}
                         </List>
                     </Collapse>
 
