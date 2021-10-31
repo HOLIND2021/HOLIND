@@ -30,6 +30,7 @@ function Navbar() {
     const handleLogout = () => {
         setAnchorEl(null);
         firebaseAuth.signOut().then(() => {
+            setUser(null);
             history.push('/login')
         })
     }
