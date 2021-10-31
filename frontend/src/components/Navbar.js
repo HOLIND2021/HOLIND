@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { useHistory } from 'react-router-dom';
 import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 import { Link } from 'react-router-dom';
@@ -9,6 +10,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import { firebaseAuth } from '../Firebase';
 
 function Navbar() {
     const [sidebar, setSidebar] = useState(false);
@@ -23,7 +25,28 @@ function Navbar() {
       setAnchorEl(null);
     };
 
-    let userRole="";
+    let history = useHistory();
+
+    const handleLogout = () => {
+        setAnchorEl(null);
+        firebaseAuth.signOut().then(() => {
+            history.push('/login')
+        })
+    }
+
+    const [user, setUser] = useState(0);
+
+    firebaseAuth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        setUser(user);
+
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
 
     return (
         <>
@@ -53,10 +76,10 @@ function Navbar() {
                         }}
                     >
                         {
-                            userRole === "clinical" ?
+                            user ?
                             <div><MenuItem onClick={handleClose}>Profile</MenuItem>
                             <MenuItem onClick={handleClose}>My account</MenuItem>
-                            <MenuItem onClick={handleClose}>Logout</MenuItem></div>
+                            <MenuItem onClick={handleLogout}>Logout</MenuItem></div>
                             : <MenuItem onClick={handleClose} component={Link} to="/login">Sign In</MenuItem>
                         }
                     </Menu>

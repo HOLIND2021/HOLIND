@@ -2,16 +2,38 @@ import React, { Component } from 'react';
 import './Home.css';
 import Tabs from '../components/Tabs';
 import Typography from '@mui/material/Typography';
+import { firebaseAuth } from '../Firebase';
 
 class Home extends Component {
   state = {
-    data: []
+    data: [],
+    user: {},
+    firstName: '',
+    lastName: ''
   }
 
   componentDidMount() {
     this.getPatients()
       .then(res => this.setState({ data: res.body }))
       .catch(err => console.log(err));
+
+    firebaseAuth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        this.setState({user: user})
+        
+        const res = await fetch(`${process.env.REACT_APP_API}/api/user/${uid}`);
+        const body = await res.json();
+        if (res.status === 200) {
+          this.setState({firstName: body.body.firstName, lastName: body.body.lastName });
+        }
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
   }
 
   getPatients = async () => {
@@ -51,7 +73,7 @@ class Home extends Component {
           {day}, {month} {currentDate}
         </Typography>
         <Typography variant="h4">
-          {greeting}, User
+          {greeting}, {this.state.firstName} {this.state.lastName}
         </Typography>
         <br></br>
         <br></br>

@@ -55,3 +55,19 @@ exports.patients = async (req, res, next) => {
         body: patientArray
     });
 }
+
+exports.user = async (req, res, next) => {
+    const uid = req.params.uid;
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        res.status(200).json({
+            body: docSnap.data()
+        })
+    } else {
+        res.status(404).json({
+            message: "User not found"
+        })
+    }
+}

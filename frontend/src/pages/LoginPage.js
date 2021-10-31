@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -8,10 +9,10 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { firebaseAuth } from '../Firebase';
 
 function Copyright(props) {
   return (
@@ -29,13 +30,23 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function LoginPage() {
+  let history = useHistory();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
     // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+
+    firebaseAuth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in 
+      console.log('Signed in')
+      history.push('/home')
+    })
+    .catch((error) => {
+      console.log(error)
     });
   };
 
