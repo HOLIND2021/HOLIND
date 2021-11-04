@@ -11,6 +11,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import MuiAlert from '@mui/material/Alert';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { firebaseAuth } from '../Firebase';
 
@@ -27,10 +28,16 @@ function Copyright(props) {
   );
 }
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 const theme = createTheme();
 
 export default function LoginPage() {
   let history = useHistory();
+
+  const [errorAlert, setErrorAlert] = React.useState(null);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -46,6 +53,7 @@ export default function LoginPage() {
       history.push('/home')
     })
     .catch((error) => {
+      setErrorAlert(String(error.message).slice(10));
       console.log(error)
     });
   };
@@ -67,6 +75,7 @@ export default function LoginPage() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
+          {errorAlert ? <Alert severity="error" sx={{marginTop: "10px"}}>{errorAlert}</Alert> : ''}
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
