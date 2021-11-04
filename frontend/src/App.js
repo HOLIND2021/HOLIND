@@ -14,22 +14,7 @@ class App extends Component {
     data: null
   }
 
-  componentDidMount() {
-    this.backendTest()
-      .then(res => this.setState({ data: res.body }))
-      .catch(err => console.log(err));
-  }
-
-  backendTest = async () => {
-    const res = await fetch(`${process.env.REACT_APP_API}/api/apiTest`);
-    const body = await res.json();
-
-    if (res.status !== 200) {
-      throw Error(body.message)
-    }
-
-    return body;
-  }
+  componentDidMount() {}
 
   render() {
     return (
