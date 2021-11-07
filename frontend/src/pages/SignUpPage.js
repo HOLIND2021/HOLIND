@@ -76,7 +76,7 @@ export default function LoginPage() {
         console.log(error)
       });
     } else {
-      setErrorAlert('Passwords do not match')
+      setErrorAlert('Passwords do not match.')
     }
   };
 
@@ -115,7 +115,6 @@ export default function LoginPage() {
               id="lastName"
               label="Last Name"
               name="lastName"
-              autoFocus
             />
             <TextField
               margin="normal"
@@ -125,7 +124,6 @@ export default function LoginPage() {
               label="Email Address"
               name="email"
               autoComplete="email"
-              autoFocus
             />
             <TextField
               margin="normal"
