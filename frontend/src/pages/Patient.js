@@ -13,7 +13,10 @@ import SendIcon from '@mui/icons-material/Send';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
-
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 
 class Patient extends Component {
     state = {
@@ -47,8 +50,8 @@ class Patient extends Component {
 
         return (
             <div className='patient'>
-                <Typography variant="h4">
-                    {this.state.first}
+                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                    {this.state.first} {this.state.last}
                 </Typography>
                 <List
                     sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
@@ -66,6 +69,9 @@ class Patient extends Component {
                             if (exercise.status === "recently_assigned") {
                                 return <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemText primary={exercise.name} />
+                                        <IconButton aria-label="delete">
+                                            <DeleteIcon />
+                                        </IconButton>
                                     </ListItemButton>
                                 }
                             })}
@@ -82,6 +88,9 @@ class Patient extends Component {
                             if (exercise.status === "do_today") {
                                 return <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemText primary={exercise.name} />
+                                        <IconButton aria-label="delete">
+                                            <DeleteIcon />
+                                        </IconButton>
                                     </ListItemButton>
                                 }
                             })}
@@ -98,6 +107,9 @@ class Patient extends Component {
                             if (exercise.status === "do_nextweek") {
                                 return <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemText primary={exercise.name} />
+                                        <IconButton aria-label="delete">
+                                            <DeleteIcon />
+                                        </IconButton>
                                     </ListItemButton>
                                 }
                             })}
@@ -114,6 +126,9 @@ class Patient extends Component {
                             if (exercise.status === "do_later") {
                                 return <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemText primary={exercise.name} />
+                                        <IconButton aria-label="delete">
+                                            <DeleteIcon />
+                                        </IconButton>
                                     </ListItemButton>
                                 }
                             })}
@@ -121,6 +136,10 @@ class Patient extends Component {
                     </Collapse>
 
                 </List>
+
+                <Stack spacing={2} direction="row">
+                    <Button variant="outlined" sx={{ marginTop: "10px" }}>Add Exercise</Button>
+                </Stack>
             </div>
         );
     }
