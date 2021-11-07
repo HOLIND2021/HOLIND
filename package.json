@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "cypress:open": "cypress open",
     "frontend": "cd frontend && npm start",
     "backend": "cd backend && nodemon server.js",
     "dev": "concurrently --kill-others-on-fail \"npm run frontend\" \"npm run backend\"",
@@ -24,5 +25,8 @@
     "concurrently": "^6.3.0",
     "nodemon": "^2.0.13",
     "react-router-dom": "^5.3.0"
+  },
+  "devDependencies": {
+    "cypress": "^8.7.0"
   }
 }
