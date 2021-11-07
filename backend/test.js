@@ -46,3 +46,11 @@ describe('User Endpoints', () => {
         expect(resFind.status).toEqual(404)
     })
 })
+
+describe('Invalid Endpoints', () => {
+    it('GET /api/invalid-url should return msg `Catch All` with 200 status', async () => {
+        const res = await request(app).get('/api/invalid-url')
+        expect(res.statusCode).toEqual(200)
+        expect(res.body.msg).toEqual('Catch All')
+    })
+})
