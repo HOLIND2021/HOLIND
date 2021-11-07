@@ -8,28 +8,14 @@ import Messages from './pages/Messages';
 import Patients from './pages/Patients';
 import Help from './pages/Help';
 import Patient from './pages/Patient'
+import SignUpPage from './pages/SignUpPage';
 
 class App extends Component {
   state = {
     data: null
   }
 
-  componentDidMount() {
-    this.backendTest()
-      .then(res => this.setState({ data: res.body }))
-      .catch(err => console.log(err));
-  }
-
-  backendTest = async () => {
-    const res = await fetch(`${process.env.REACT_APP_API}/api/apiTest`);
-    const body = await res.json();
-
-    if (res.status !== 200) {
-      throw Error(body.message)
-    }
-
-    return body;
-  }
+  componentDidMount() {}
 
   render() {
     return (
@@ -38,6 +24,8 @@ class App extends Component {
           <Navbar />
           <Switch>
             <Route path='/' exact component={LoginPage} />
+            <Route path='/login' component={LoginPage} />
+            <Route path='/signup' component={SignUpPage} />
             <Route path='/home' component={Home} />
             <Route path='/patients' component={Patients} />
             <Route path='/messages' component={Messages} />

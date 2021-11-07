@@ -1,6 +1,6 @@
 const { initializeApp } = require("firebase/app");
 const { getAuth, signInWithEmailAndPassword } = require("firebase/auth");
-const { getFirestore, collection, doc, getDoc, query, getDocs } = require("firebase/firestore");
+const { getFirestore, collection, doc, getDoc, query, getDocs, setDoc } = require("firebase/firestore");
 const firebaseConfig = {
     apiKey: process.env.apiKey,
     authDomain: process.env.authDomain,
@@ -54,4 +54,45 @@ exports.patients = async (req, res, next) => {
     res.status(200).json({
         body: patientArray
     });
+}
+
+exports.user = async (req, res, next) => {
+    const uid = req.params.uid;
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        res.status(200).json({
+            body: docSnap.data()
+        })
+    } else {
+        res.status(404).json({
+            message: "User not found"
+        })
+    }
+}
+
+exports.createUser = async (req, res, next) => {
+    const body = req.body;
+    const uid = body.uid;
+    const firstName = body.firstName;
+    const lastName = body.lastName;
+
+    await setDoc(doc(db, "users", uid), {
+        firstName,
+        lastName
+    })
+
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        res.status(201).json({
+            body: docSnap.data()
+        })
+    } else {
+        res.status(500).json({
+            message: "Error creating user document"
+        })
+    }
 }
