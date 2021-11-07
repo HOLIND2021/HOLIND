@@ -45,34 +45,39 @@ export default function LoginPage() {
     const lastName = data.get('lastName');
     const email = data.get('email');
     const password = data.get('password');
+    const passwordConfirm = data.get('passwordConfirm');
     // eslint-disable-next-line no-console
 
-    firebaseAuth.createUserWithEmailAndPassword(email, password)
-    .then(async (userCredential) => {
-      // Signed in 
-      const uid = userCredential.user.uid;
-
-      await fetch(`${process.env.REACT_APP_API}/api/createUser`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-              uid,
-              firstName,
-              lastName
-          })
-      }).then((res) => console.log("User Document Created"))
-      .catch((err) => console.log(err))
-
-      console.log('Account Created: ' + email)
-      history.push('/home')
-    })
-    .catch((error) => {
-      // Remove the text 'Firebase:' from the beginning of the error message 
-      setErrorAlert(String(error.message).slice(10));
-      console.log(error)
-    });
+    if (password === passwordConfirm) {
+      firebaseAuth.createUserWithEmailAndPassword(email, password)
+      .then(async (userCredential) => {
+        // Signed in 
+        const uid = userCredential.user.uid;
+  
+        await fetch(`${process.env.REACT_APP_API}/api/createUser`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                uid,
+                firstName,
+                lastName
+            })
+        }).then((res) => console.log("User Document Created"))
+        .catch((err) => console.log(err))
+  
+        console.log('Account Created: ' + email)
+        history.push('/home')
+      })
+      .catch((error) => {
+        // Remove the text 'Firebase:' from the beginning of the error message 
+        setErrorAlert(String(error.message).slice(10));
+        console.log(error)
+      });
+    } else {
+      setErrorAlert('Passwords do not match')
+    }
   };
 
   return (
@@ -130,7 +135,17 @@ export default function LoginPage() {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="passwordConfirm"
+              label="Confirm Password"
+              type="password"
+              id="passwordConfirm"
+              autoComplete="new-password"
             />
             <Button
               type="submit"
