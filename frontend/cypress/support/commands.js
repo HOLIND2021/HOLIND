@@ -1,3 +1,29 @@
+const { initializeApp } = require("firebase/app");
+import firebase from "firebase/app";
+const { getAuth, signInWithEmailAndPassword } = require("firebase/auth");
+const { getFirestore, collection, doc, getDoc, query, getDocs, setDoc } = require("firebase/firestore");
+import { attachCustomCommands } from "cypress-firebase";
+
+const fbConfig = {
+    apiKey:"AIzaSyAx0rkiVOeY1gkpz8Y99fEMd_siEKai540",
+    authDomain:"holind-a4624.firebaseapp.com",
+    projectId:"holind-a4624",
+    storageBucket:"holind-a4624.appspot.com",
+    messagingSenderId:"122590760249",
+    appId:"1:122590760249:web:f3a80100b3907f022c6ce8",
+    measurementId:"G-99NJ961GLR"
+};
+
+
+initializeApp(fbConfig);
+const auth = getAuth();
+const db = getFirestore();
+
+
+attachCustomCommands({ Cypress, cy, firebase });
+
+
+
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite

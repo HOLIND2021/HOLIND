@@ -1,7 +1,7 @@
 
 
 
-let x = false;
+
 
   describe('page loads', () => {
     it('successfully loads', () => {
@@ -11,42 +11,41 @@ let x = false;
     })
   })
 
-  describe('signup', () => {
-    it('finds input', function () {
-        cy.visit('http://localhost:3000/signup')
-        cy.get('#firstName')
-        .should('be.visible')
-        .type('joe')
+  // describe('signup', () => {
+  //   it('finds input', function () {
+  //       cy.visit('http://localhost:3000/signup')
+  //       cy.get('#firstName')
+  //       .should('be.visible')
+  //       .type('joe')
 
-        cy.get('#lastName')
-        .should('be.visible')
-        .type('zhang')
+  //       cy.get('#lastName')
+  //       .should('be.visible')
+  //       .type('zhang')
 
-        cy.get('#email')
-        .should('be.visible')
-        .type('joezhang@gmail.com')
+  //       cy.get('#email')
+  //       .should('be.visible')
+  //       .type('joezhang@gmail.com')
 
-        cy.get('#password')
-        .should('be.visible')
-        .type('12345678{enter}')
+  //       cy.get('#password')
+  //       .should('be.visible')
+  //       .type('12345678{enter}')
 
-        x = cy.includes('The email address is already in use by another account. (auth/email-already-in-use).')
-        cy.log(x)
-      })
+  //       x = cy.includes('The email address is already in use by another account. (auth/email-already-in-use).')
+  //       cy.log(x)
+  //     })
 
 
 
-    })
-    
-    if (false) {
+  //   })
+  
 
-      describe('logout', () => {
-        it('finds inputs and types in information', function () {
-            // destructuring assignment of the this.currentUser object
-            cy.get('#basic-button').click()
-            cy.contains('Logout').click()
-          })
-      })
+  //     describe('logout', () => {
+  //       it('finds inputs and types in information', function () {
+  //           // destructuring assignment of the this.currentUser object
+  //           cy.get('#basic-button').click()
+  //           cy.contains('Logout').click()
+  //         })
+  //     })
   
     
   
@@ -103,7 +102,7 @@ let x = false;
 
 
 
-    }
+    
 
     
 
