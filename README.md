@@ -115,4 +115,4 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ## Acknowledgements
 
-We would like to thank our mentor, Dev Doshi, for providing guidance and assistance with the project.
+We would like to thank our mentor, Dev Doshi, for providing guidance and assistance with the project. We would also like to thank our client, Brennan Barber, for providing feedback throughout each step of the project.
