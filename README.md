@@ -44,6 +44,14 @@ Run the jest test suite and generate a coverage report.
 
 ### Frontend Testing
 
+#### (In frontend folder) `npm run cypress:open`
+
+Run the cypress test suite
+
+#### (In frontend folder) `open coverage/lcov-report/index.html`
+
+Generate coverage report
+
 ## Deployment
 
 ### Heroku Deployment
