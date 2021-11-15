@@ -17,8 +17,9 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import { FormControl, Input, InputLabel, FormHelperText, Select, MenuItem, Box, TextField } from '@mui/material';
+import { FormControl, Input, InputLabel, FormHelperText, Select, MenuItem, Box, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { doc, updateDoc } from "firebase/firestore";
+
 
 
 class Patient extends Component {
@@ -32,7 +33,8 @@ class Patient extends Component {
         open2: true,
         open3: true,
         open4: true,
-        showForm: false
+        showForm: false,
+        showDialog: false
     }
 
 
@@ -118,7 +120,11 @@ class Patient extends Component {
                         {this.state.exercises.map((exercise) => {
                             if (exercise.status === "recently_assigned") {
                                 return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} />
+                                        <ListItemText primary={exercise.name} primaryTypographyProps={{ style: {
+                                                                                                        whiteSpace: 'nowrap',
+                                                                                                        overflow: 'hidden',
+                                                                                                        textOverflow: 'ellipsis'
+                                                                                                    } }} />
                                         <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
@@ -137,7 +143,11 @@ class Patient extends Component {
                         {this.state.exercises.map((exercise) => {
                             if (exercise.status === "do_today") {
                                 return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} />
+                                        <ListItemText primary={exercise.name} primaryTypographyProps={{ style: {
+                                                                                                        whiteSpace: 'nowrap',
+                                                                                                        overflow: 'hidden',
+                                                                                                        textOverflow: 'ellipsis'
+                                                                                                    } }} />
                                         <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
@@ -156,7 +166,11 @@ class Patient extends Component {
                         {this.state.exercises.map((exercise) => {
                             if (exercise.status === "do_nextweek") {
                                 return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} />
+                                        <ListItemText primary={exercise.name} primaryTypographyProps={{ style: {
+                                                                                                        whiteSpace: 'nowrap',
+                                                                                                        overflow: 'hidden',
+                                                                                                        textOverflow: 'ellipsis'
+                                                                                                    } }} />
                                         <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
@@ -175,7 +189,11 @@ class Patient extends Component {
                         {this.state.exercises.map((exercise) => {
                             if (exercise.status === "do_later") {
                                 return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} />
+                                        <ListItemText primary={exercise.name} primaryTypographyProps={{ style: {
+                                                                                                        whiteSpace: 'nowrap',
+                                                                                                        overflow: 'hidden',
+                                                                                                        textOverflow: 'ellipsis'
+                                                                                                    } }} />
                                         <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
@@ -186,46 +204,40 @@ class Patient extends Component {
                     </Collapse>
                 </List>
 
-                    <Button variant="outlined" sx={{ marginTop: "10px" }} onClick={() => this.setState({ showForm: !this.state.showForm })}>Add Exercise</Button>
-                    <Collapse in={this.state.showForm} timeout="auto" unmountOnExit>
-                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }} style={{
-                            position: 'absolute', 
-                            left: '50%', 
-                            top: '50%',
-                            transform: 'translate(-50%, -50%)'
-                        }}>
-                            <TextField
-                                margin="normal"
-                                id="title"
-                                label="Task Name"
-                                name="title"
-                                autoFocus
-                            />
-                            <br></br>
-                            <FormControl sx={{ minWidth: 80, mt: 1}}>
-                            <InputLabel id="demo-simple-select-autowidth-label">Date</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-autowidth-label"
-                                id="demo-simple-select-autowidth"
-                                label="date"
-                                name="date"
-                            >
-                                <MenuItem value="recently_assigned">Recently Assigned</MenuItem>
-                                <MenuItem value="do_today">Do Today</MenuItem>
-                                <MenuItem value="do_nextweek">Do Next Week</MenuItem>
-                                <MenuItem value="do_later">Do Later</MenuItem>
-                            </Select>
-                            </FormControl>
-                            <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            >
-                            Add Exercise
-                            </Button>
-                        </Box>
-                    </Collapse>
+                <Button variant="outlined" onClick={() => this.setState({ showDialog: !this.state.showDialog })}>
+                    Add Task
+                </Button>
+                <Dialog open={this.state.showDialog} component="form" onSubmit={handleSubmit}>
+                    <DialogTitle>Add Task</DialogTitle>
+                    <DialogContent>
+                    <TextField
+                            margin="normal"
+                            id="title"
+                            label="Task Name"
+                            name="title"
+                            autoFocus
+                        />
+                        <br></br>
+                        <FormControl sx={{ minWidth: 80, mt: 1}}>
+                        <InputLabel id="demo-simple-select-autowidth-label">Date</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-autowidth-label"
+                            id="demo-simple-select-autowidth"
+                            label="date"
+                            name="date"
+                        >
+                            <MenuItem value="recently_assigned">Recently Assigned</MenuItem>
+                            <MenuItem value="do_today">Do Today</MenuItem>
+                            <MenuItem value="do_nextweek">Do Next Week</MenuItem>
+                            <MenuItem value="do_later">Do Later</MenuItem>
+                        </Select>
+                        </FormControl>
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={() => this.setState({ showDialog: !this.state.showDialog })}>Cancel</Button>
+                    <Button type="submit" variant="contained">Add Task</Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         );
     }
