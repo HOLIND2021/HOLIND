@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {Link} from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import Patient from './Patient';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
@@ -54,7 +54,7 @@ class Patients extends Component {
                         hover={true}
                         component={Link} 
                         to={{
-                          pathname: `/patient`,
+                          pathname: `/patient/${patient.uid}`,
                           state: patient
                         }}
                       >

@@ -17,6 +17,9 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
+import { FormControl, Input, InputLabel, FormHelperText, Select, MenuItem, Box, TextField } from '@mui/material';
+import { doc, updateDoc } from "firebase/firestore";
+
 
 class Patient extends Component {
     state = {
@@ -24,28 +27,75 @@ class Patient extends Component {
         first: "",
         last: "",
         status: "",
+        uid: "",
         open1: true,
         open2: true,
         open3: true,
-        open4: true
+        open4: true,
+        showForm: false
     }
 
 
-    componentDidMount() {
-        const { state } = this.props.location;
-        
+    async componentDidMount() {
         this.setState({
-            exercises: state.exercises,
-            first: state.first,
-            last: state.last,
-            status: state.status
+            uid: this.props.match.params.uid
         });
+        const res = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${this.props.match.params.uid}`);
+        const body = await res.json();
+        if (res.status === 200) {
+          this.setState({exercises: body.body.exercises, first: body.body.first, last: body.body.last, status: body.body.status });
+        }
     }
+
+    
 
     render() {    
         
         const category_text = {
             fontWeight: "bold"
+        };
+
+        const handleSubmit = async (event) => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            const title = data.get('title');
+            const date = data.get('date');
+            const puid = this.state.uid
+            console.log('Task Created ' + title + ' for ' + date)
+
+            await fetch(`${process.env.REACT_APP_API}/api/updatePatient`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    puid,
+                    title,
+                    date
+                })
+            }).then((res) => window.location.reload())
+            .catch((err) => console.log(err))
+          };
+
+        const handleDelete = async (event) => {
+            event.preventDefault();
+            const title = event.currentTarget.name
+            const date = event.currentTarget.id
+            const puid = this.state.uid
+            console.log(title + ' ' + date + ' ' + puid)
+
+            await fetch(`${process.env.REACT_APP_API}/api/deleteTask`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    puid,
+                    title,
+                    date
+                })
+            }).then((res) => window.location.reload())
+            .catch((err) => console.log(err))
         };
 
         return (
@@ -69,7 +119,7 @@ class Patient extends Component {
                             if (exercise.status === "recently_assigned") {
                                 return <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemText primary={exercise.name} />
-                                        <IconButton aria-label="delete">
+                                        <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </ListItemButton>
@@ -88,7 +138,7 @@ class Patient extends Component {
                             if (exercise.status === "do_today") {
                                 return <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemText primary={exercise.name} />
-                                        <IconButton aria-label="delete">
+                                        <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </ListItemButton>
@@ -107,7 +157,7 @@ class Patient extends Component {
                             if (exercise.status === "do_nextweek") {
                                 return <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemText primary={exercise.name} />
-                                        <IconButton aria-label="delete">
+                                        <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </ListItemButton>
@@ -126,7 +176,7 @@ class Patient extends Component {
                             if (exercise.status === "do_later") {
                                 return <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemText primary={exercise.name} />
-                                        <IconButton aria-label="delete">
+                                        <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </ListItemButton>
@@ -134,12 +184,48 @@ class Patient extends Component {
                             })}
                         </List>
                     </Collapse>
-
                 </List>
 
-                <Stack spacing={2} direction="row">
-                    <Button variant="outlined" sx={{ marginTop: "10px" }}>Add Exercise</Button>
-                </Stack>
+                    <Button variant="outlined" sx={{ marginTop: "10px" }} onClick={() => this.setState({ showForm: !this.state.showForm })}>Add Exercise</Button>
+                    <Collapse in={this.state.showForm} timeout="auto" unmountOnExit>
+                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }} style={{
+                            position: 'absolute', 
+                            left: '50%', 
+                            top: '50%',
+                            transform: 'translate(-50%, -50%)'
+                        }}>
+                            <TextField
+                                margin="normal"
+                                id="title"
+                                label="Task Name"
+                                name="title"
+                                autoFocus
+                            />
+                            <br></br>
+                            <FormControl sx={{ minWidth: 80, mt: 1}}>
+                            <InputLabel id="demo-simple-select-autowidth-label">Date</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-autowidth-label"
+                                id="demo-simple-select-autowidth"
+                                label="date"
+                                name="date"
+                            >
+                                <MenuItem value="recently_assigned">Recently Assigned</MenuItem>
+                                <MenuItem value="do_today">Do Today</MenuItem>
+                                <MenuItem value="do_nextweek">Do Next Week</MenuItem>
+                                <MenuItem value="do_later">Do Later</MenuItem>
+                            </Select>
+                            </FormControl>
+                            <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                            >
+                            Add Exercise
+                            </Button>
+                        </Box>
+                    </Collapse>
             </div>
         );
     }
