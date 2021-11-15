@@ -18,25 +18,9 @@ const db = getFirestore();
 
 signInWithEmailAndPassword(auth, process.env.FIREBASE_USER, process.env.FIREBASE_PASS)
     .then(user => {
-        console.log('Signed into firebase')
     }).catch(error => {
         console.log(error)
     })
-
-exports.apiTest = async (req, res, next) => {
-    const docRef = doc(db, "test", "test document");
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
-        res.status(200).json({
-            body: docSnap.data()
-        });
-    } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-    }
-};
 
 exports.patients = async (req, res, next) => {
     const q = query(collection(db, "patients"));
@@ -161,6 +145,23 @@ exports.deleteTask = async (req, res, next) => {
     } else {
         res.status(404).json({
             message: "Error deleting task"
+        })
+    }
+}
+exports.deleteUser = async (req, res, next) => {
+    const uid = req.params.uid;
+
+    const docRef = doc(db, "users", uid);
+    await deleteDoc(docRef);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        res.status(500).json({
+            message: 'Failed to delete user: ' + uid
+        })
+    } else {
+        res.status(204).json({
+            message: 'User deleted: ' + uid
         })
     }
 }
