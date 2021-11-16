@@ -1,6 +1,6 @@
 const { initializeApp } = require("firebase/app");
 const { getAuth, signInWithEmailAndPassword } = require("firebase/auth");
-const { getFirestore, collection, doc, getDoc, query, getDocs, setDoc, deleteDoc } = require("firebase/firestore");
+const { getFirestore, collection, doc, getDoc, query, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove } = require("firebase/firestore");
 const firebaseConfig = {
     apiKey: process.env.apiKey,
     authDomain: process.env.authDomain,
@@ -33,7 +33,8 @@ exports.patients = async (req, res, next) => {
     }
     let patientArray = [];
     querySnapshot.forEach((doc) => {
-        patientArray.push(doc.data());
+        let patientObject = Object.assign({uid: doc.id}, doc.data())
+        patientArray.push(patientObject);
     })
     res.status(200).json({
         body: patientArray
@@ -81,6 +82,72 @@ exports.createUser = async (req, res, next) => {
     }
 }
 
+exports.updatePatient = async (req, res, next) => {
+    const body = req.body;
+    const uid = body.puid;
+    const title = body.title;
+    const date = body.date;
+
+
+    await updateDoc(doc(db, "patients", uid), {
+        exercises: arrayUnion({name: title, status: date})
+    })
+
+    const docRef = doc(db, "patients", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        res.status(201).json({
+            body: docSnap.data()
+        })
+    } else {
+        res.status(500).json({
+            message: "Error modifying patient document"
+        })
+    }
+}
+
+exports.getPatient = async (req, res, next) => {
+    const uid = req.params.uid;
+    console.log(uid)
+    const docRef = doc(db, "patients", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        res.status(200).json({
+            body: docSnap.data()
+        })
+    } else {
+        res.status(404).json({
+            message: "Patient not found"
+        })
+    }
+}
+
+exports.deleteTask = async (req, res, next) => {
+    const body = req.body;
+    const uid = body.puid;
+    const title = body.title;
+    const date = body.date;
+    console.log(uid + ' ' + title + ' ' + date)
+
+    await updateDoc(doc(db, "patients", uid), {
+        exercises: arrayRemove({name: title, status: date})
+    })
+
+    const docRef = doc(db, "patients", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        res.status(200).json({
+            body: docSnap.data()
+        })
+    } else {
+        res.status(404).json({
+            message: "Error deleting task"
+        })
+    }
+}
 exports.deleteUser = async (req, res, next) => {
     const uid = req.params.uid;
 
