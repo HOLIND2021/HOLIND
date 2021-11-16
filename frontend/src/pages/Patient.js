@@ -1,26 +1,15 @@
 import React, { Component } from 'react';
-import { useLocation } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
-import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
-import SendIcon from '@mui/icons-material/Send';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import StarBorder from '@mui/icons-material/StarBorder';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import { FormControl, Input, InputLabel, FormHelperText, Select, MenuItem, Box, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import { doc, updateDoc } from "firebase/firestore";
-
-
+import { FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 
 class Patient extends Component {
     state = {
@@ -129,7 +118,7 @@ class Patient extends Component {
                                             <DeleteIcon />
                                         </IconButton>
                                     </ListItemButton>
-                                }
+                                } else return '';
                             })}
                         </List>
                     </Collapse>
@@ -152,7 +141,7 @@ class Patient extends Component {
                                             <DeleteIcon />
                                         </IconButton>
                                     </ListItemButton>
-                                }
+                                } else return '';
                             })}
                         </List>
                     </Collapse>
@@ -175,7 +164,7 @@ class Patient extends Component {
                                             <DeleteIcon />
                                         </IconButton>
                                     </ListItemButton>
-                                }
+                                } else return '';
                             })}
                         </List>
                     </Collapse>
@@ -198,7 +187,7 @@ class Patient extends Component {
                                             <DeleteIcon />
                                         </IconButton>
                                     </ListItemButton>
-                                }
+                                } else return '';
                             })}
                         </List>
                     </Collapse>
