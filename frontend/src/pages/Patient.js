@@ -18,7 +18,7 @@ import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import { FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 
-function ExerciseOptionsMenu({ exercise, state, setExercises }) {
+function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [showEditDialog, setShowEditDialog] = React.useState(false);
     const open = Boolean(anchorEl);
@@ -52,12 +52,8 @@ function ExerciseOptionsMenu({ exercise, state, setExercises }) {
                 date
             })
         }).then(async (res) => {
-            const response = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${state.uid}`);
-            const body = await response.json();
-            if (response.status === 200) {
-                setExercises(body.body.exercises)
-                setShowEditDialog(false);
-            }
+            updateExercises()
+            setShowEditDialog(false);
         })
             .catch((err) => console.log(err))
     };
@@ -82,12 +78,8 @@ function ExerciseOptionsMenu({ exercise, state, setExercises }) {
                 date
             })
         }).then(async (res) => {
-            const response = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${state.uid}`);
-            const body = await response.json();
-            if (response.status === 200) {
-                setExercises(body.body.exercises)
-                setShowEditDialog(false);
-            }
+            updateExercises()
+            setShowEditDialog(false);
         })
             .catch((err) => console.log(err))
     }
@@ -172,17 +164,13 @@ class Patient extends Component {
         last: "",
         status: "",
         uid: "",
-        open1: true,
-        open2: true,
-        open3: true,
-        open4: true,
-        showForm: false,
-        showDialog: false    
+        open: [true, true, true, true, false],
+        showDialog: false
     }
 
     constructor(props) {
         super(props)
-        this.setExercises = this.setExercises.bind(this);
+        this.updateExercises = this.updateExercises.bind(this);
     }
 
     async componentDidMount() {
@@ -196,10 +184,14 @@ class Patient extends Component {
         }
     }
 
-    setExercises(exercises) {
-        this.setState({
-            exercises: exercises
-        })
+    async updateExercises() {
+        const response = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${this.state.uid}`);
+        const body = await response.json();
+        if (response.status === 200) {
+            this.setState({
+                exercises: body.body.exercises,
+            })
+        }
     }
 
     render() {
@@ -207,6 +199,31 @@ class Patient extends Component {
         const category_text = {
             fontWeight: "bold"
         };
+
+        const taskList = [
+            {
+                name: "Recently Assigned",
+                value: "recently_assigned"
+            }, {
+                name: "Do Today",
+                value: "do_today"
+            }, {
+                name: "Do Next Week",
+                value: "do_nextweek"
+            }, {
+                name: "Do Later",
+                value: "do_later"
+            }, {
+                name: "Completed",
+                value: "completed"
+            }
+        ]
+
+        const handleOpen = async (index) => {
+            let open = this.state.open;
+            open[index] = !open[index];
+            this.setState({ open: open });
+        }
 
         const handleSubmit = async (event) => {
             event.preventDefault();
@@ -227,14 +244,9 @@ class Patient extends Component {
                     date
                 })
             }).then(async (res) => {
-                const response = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${this.state.uid}`);
-                const body = await response.json();
-                if (response.status === 200) {
-                    this.setState({
-                        exercises: body.body.exercises,
-                        showDialog: false
-                    })
-                }
+                this.updateExercises()
+                this.setState({ showDialog: false })
+
             })
                 .catch((err) => console.log(err))
         };
@@ -259,101 +271,35 @@ class Patient extends Component {
                     component="nav"
                     aria-labelledby="nested-list-subheader"
                 >
-
-                    <ListItemButton onClick={() => this.setState({ open1: !this.state.open1 })}>
-                        <ListItemText primaryTypographyProps={{ style: category_text }} primary="Recently Assigned" />
-                        {this.state.open1 ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={this.state.open1} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            {this.state.exercises.map((exercise) => {
-                                if (exercise.status === "recently_assigned") {
-                                    return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} primaryTypographyProps={{
-                                            style: {
-                                                whiteSpace: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis'
-                                            }
-                                        }} />
-                                        <ExerciseOptionsMenu exercise={exercise} state={this.state} setExercises={this.setExercises} />
-                                    </ListItemButton>
-                                } else return '';
-                            })}
-                        </List>
-                    </Collapse>
-
-                    <ListItemButton onClick={() => this.setState({ open2: !this.state.open2 })}>
-                        <ListItemText primaryTypographyProps={{ style: category_text }} primary="Do Today" />
-                        {this.state.open2 ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={this.state.open2} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            {this.state.exercises.map((exercise) => {
-                                if (exercise.status === "do_today") {
-                                    return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} primaryTypographyProps={{
-                                            style: {
-                                                whiteSpace: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis'
-                                            }
-                                        }} />
-                                        <ExerciseOptionsMenu exercise={exercise} state={this.state} setExercises={this.setExercises} />
-                                    </ListItemButton>
-                                } else return '';
-                            })}
-                        </List>
-                    </Collapse>
-
-                    <ListItemButton onClick={() => this.setState({ open3: !this.state.open3 })}>
-                        <ListItemText primaryTypographyProps={{ style: category_text }} primary="Do Next Week" />
-                        {this.state.open3 ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={this.state.open3} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            {this.state.exercises.map((exercise) => {
-                                if (exercise.status === "do_nextweek") {
-                                    return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} primaryTypographyProps={{
-                                            style: {
-                                                whiteSpace: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis'
-                                            }
-                                        }} />
-                                        <ExerciseOptionsMenu exercise={exercise} state={this.state} setExercises={this.setExercises} />
-                                    </ListItemButton>
-                                } else return '';
-                            })}
-                        </List>
-                    </Collapse>
-
-                    <ListItemButton onClick={() => this.setState({ open4: !this.state.open4 })}>
-                        <ListItemText primaryTypographyProps={{ style: category_text }} primary="Do Later" />
-                        {this.state.open4 ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={this.state.open4} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            {this.state.exercises.map((exercise) => {
-                                if (exercise.status === "do_later") {
-                                    return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} primaryTypographyProps={{
-                                            style: {
-                                                whiteSpace: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis'
-                                            }
-                                        }} />
-                                        <ExerciseOptionsMenu exercise={exercise} state={this.state} setExercises={this.setExercises} />
-                                    </ListItemButton>
-                                } else return '';
-                            })}
-                        </List>
-                    </Collapse>
+                    {taskList.map((task, index) => (
+                        <div>
+                            <ListItemButton onClick={() => handleOpen(index)}>
+                                <ListItemText primaryTypographyProps={{ style: category_text }} primary={task.name} />
+                                {this.state.open[index] ? <ExpandLess /> : <ExpandMore />}
+                            </ListItemButton>
+                            <Collapse in={this.state.open[index]} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding>
+                                    {this.state.exercises.map((exercise) => {
+                                        if (exercise.status === task.value) {
+                                            return <ListItemButton sx={{ pl: 4 }}>
+                                                <ListItemText primary={exercise.name} primaryTypographyProps={{
+                                                    style: {
+                                                        whiteSpace: 'nowrap',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis'
+                                                    }
+                                                }} />
+                                                <ExerciseOptionsMenu exercise={exercise} state={this.state} updateExercises={this.updateExercises} />
+                                            </ListItemButton>
+                                        } else return '';
+                                    })}
+                                </List>
+                            </Collapse>
+                        </div>
+                    ))}
                 </List>
 
-                <Button variant="outlined" sx={{marginTop: '20px'}} onClick={() => this.setState({ showDialog: !this.state.showDialog })}>
+                <Button variant="outlined" sx={{ marginTop: '20px' }} onClick={() => this.setState({ showDialog: !this.state.showDialog })}>
                     Add Task
                 </Button>
                 <Dialog open={this.state.showDialog} component="form" onSubmit={handleSubmit}>
