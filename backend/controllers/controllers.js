@@ -107,9 +107,45 @@ exports.updatePatient = async (req, res, next) => {
     }
 }
 
+exports.updateExercise = async (req, res, next) => {
+    const body = req.body;
+    const uid = body.puid;
+    const oldTitle = body.oldTitle;
+    const title = body.title;
+    const date = body.date;
+
+    const docRef = doc(db, "patients", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        let exercises = docSnap.data().exercises;
+        exercises = exercises.map((exercise) => {
+            if (exercise.name === oldTitle) {
+                return {
+                    name: title,
+                    status: date
+                }
+            } else return exercise;
+        })
+
+        await updateDoc(doc(db, "patients", uid), {
+            exercises: exercises
+        })
+        res.status(204);
+        res.json({
+            "exercises": docSnap.data()
+        });
+    } else {
+        res.status(500).json({
+            message: "Error modifying patient document"
+        })
+    }
+    
+}
+
 exports.getPatient = async (req, res, next) => {
     const uid = req.params.uid;
-    console.log(uid)
+
     const docRef = doc(db, "patients", uid);
     const docSnap = await getDoc(docRef);
 
@@ -129,7 +165,6 @@ exports.deleteTask = async (req, res, next) => {
     const uid = body.puid;
     const title = body.title;
     const date = body.date;
-    console.log(uid + ' ' + title + ' ' + date)
 
     await updateDoc(doc(db, "patients", uid), {
         exercises: arrayRemove({name: title, status: date})

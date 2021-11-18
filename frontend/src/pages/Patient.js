@@ -6,13 +6,164 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import { FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+
+function ExerciseOptionsMenu({ exercise, state, setExercises }) {
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [showEditDialog, setShowEditDialog] = React.useState(false);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleEdit = () => {
+        setAnchorEl(null);
+        setShowEditDialog(true);
+    }
+
+    const handleDelete = async (event) => {
+        setAnchorEl(null);
+        event.preventDefault();
+        const title = exercise.name
+        const date = exercise.status
+        const puid = state.uid
+
+        await fetch(`${process.env.REACT_APP_API}/api/deleteTask`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                puid,
+                title,
+                date
+            })
+        }).then(async (res) => {
+            const response = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${state.uid}`);
+            const body = await response.json();
+            if (response.status === 200) {
+                setExercises(body.body.exercises)
+                setShowEditDialog(false);
+            }
+        })
+            .catch((err) => console.log(err))
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const title = data.get('title');
+        const date = data.get('date');
+        const puid = state.uid
+        console.log('Task Edited ' + title + ' for ' + date)
+
+        await fetch(`${process.env.REACT_APP_API}/api/updateExercise`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                puid,
+                oldTitle: exercise.name,
+                title,
+                date
+            })
+        }).then(async (res) => {
+            const response = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${state.uid}`);
+            const body = await response.json();
+            if (response.status === 200) {
+                setExercises(body.body.exercises)
+                setShowEditDialog(false);
+            }
+        })
+            .catch((err) => console.log(err))
+    }
+
+    return (
+        <div>
+            <Tooltip title="Options">
+                <IconButton
+                    id="basic-button"
+                    aria-controls="basic-menu"
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClick}
+                >
+                    <MoreVertRoundedIcon />
+                </IconButton>
+            </Tooltip>
+            <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                }}
+            >
+                <MenuItem onClick={handleEdit}>
+                    <ListItemIcon>
+                        <EditRoundedIcon />
+                    </ListItemIcon>
+                    Edit
+                </MenuItem>
+                <MenuItem onClick={handleDelete}>
+                    <ListItemIcon>
+                        <DeleteIcon />
+                    </ListItemIcon>
+                    Delete
+                </MenuItem>
+            </Menu>
+            <Dialog open={showEditDialog} component="form" onSubmit={handleSubmit}>
+                <DialogTitle>Edit Task</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        margin="normal"
+                        id="title"
+                        label="Task Name"
+                        name="title"
+                        defaultValue={exercise.name}
+                        autoFocus
+                    />
+                    <br></br>
+                    <FormControl sx={{ minWidth: 80, mt: 1 }}>
+                        <InputLabel id="demo-simple-select-autowidth-label">Date</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-autowidth-label"
+                            id="demo-simple-select-autowidth"
+                            label="date"
+                            name="date"
+                            defaultValue={exercise.status}
+                        >
+                            <MenuItem value="recently_assigned">Recently Assigned</MenuItem>
+                            <MenuItem value="do_today">Do Today</MenuItem>
+                            <MenuItem value="do_nextweek">Do Next Week</MenuItem>
+                            <MenuItem value="do_later">Do Later</MenuItem>
+                        </Select>
+                    </FormControl>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setShowEditDialog(false)}>Cancel</Button>
+                    <Button type="submit" variant="contained">Edit Task</Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    );
+}
+
 
 class Patient extends Component {
     state = {
@@ -26,9 +177,13 @@ class Patient extends Component {
         open3: true,
         open4: true,
         showForm: false,
-        showDialog: false
+        showDialog: false    
     }
 
+    constructor(props) {
+        super(props)
+        this.setExercises = this.setExercises.bind(this);
+    }
 
     async componentDidMount() {
         this.setState({
@@ -41,7 +196,11 @@ class Patient extends Component {
         }
     }
 
-
+    setExercises(exercises) {
+        this.setState({
+            exercises: exercises
+        })
+    }
 
     render() {
 
@@ -67,28 +226,16 @@ class Patient extends Component {
                     title,
                     date
                 })
-            }).then((res) => window.location.reload())
-                .catch((err) => console.log(err))
-        };
-
-        const handleDelete = async (event) => {
-            event.preventDefault();
-            const title = event.currentTarget.name
-            const date = event.currentTarget.id
-            const puid = this.state.uid
-            console.log(title + ' ' + date + ' ' + puid)
-
-            await fetch(`${process.env.REACT_APP_API}/api/deleteTask`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    puid,
-                    title,
-                    date
-                })
-            }).then((res) => window.location.reload())
+            }).then(async (res) => {
+                const response = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${this.state.uid}`);
+                const body = await response.json();
+                if (response.status === 200) {
+                    this.setState({
+                        exercises: body.body.exercises,
+                        showDialog: false
+                    })
+                }
+            })
                 .catch((err) => console.log(err))
         };
 
@@ -129,9 +276,7 @@ class Patient extends Component {
                                                 textOverflow: 'ellipsis'
                                             }
                                         }} />
-                                        <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
-                                            <DeleteIcon />
-                                        </IconButton>
+                                        <ExerciseOptionsMenu exercise={exercise} state={this.state} setExercises={this.setExercises} />
                                     </ListItemButton>
                                 } else return '';
                             })}
@@ -154,9 +299,7 @@ class Patient extends Component {
                                                 textOverflow: 'ellipsis'
                                             }
                                         }} />
-                                        <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
-                                            <DeleteIcon />
-                                        </IconButton>
+                                        <ExerciseOptionsMenu exercise={exercise} state={this.state} setExercises={this.setExercises} />
                                     </ListItemButton>
                                 } else return '';
                             })}
@@ -179,9 +322,7 @@ class Patient extends Component {
                                                 textOverflow: 'ellipsis'
                                             }
                                         }} />
-                                        <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
-                                            <DeleteIcon />
-                                        </IconButton>
+                                        <ExerciseOptionsMenu exercise={exercise} state={this.state} setExercises={this.setExercises} />
                                     </ListItemButton>
                                 } else return '';
                             })}
@@ -204,9 +345,7 @@ class Patient extends Component {
                                                 textOverflow: 'ellipsis'
                                             }
                                         }} />
-                                        <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
-                                            <DeleteIcon />
-                                        </IconButton>
+                                        <ExerciseOptionsMenu exercise={exercise} state={this.state} setExercises={this.setExercises} />
                                     </ListItemButton>
                                 } else return '';
                             })}
@@ -214,7 +353,7 @@ class Patient extends Component {
                     </Collapse>
                 </List>
 
-                <Button variant="outlined" onClick={() => this.setState({ showDialog: !this.state.showDialog })}>
+                <Button variant="outlined" sx={{marginTop: '20px'}} onClick={() => this.setState({ showDialog: !this.state.showDialog })}>
                     Add Task
                 </Button>
                 <Dialog open={this.state.showDialog} component="form" onSubmit={handleSubmit}>
