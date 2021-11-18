@@ -1,22 +1,16 @@
 import React, { Component } from 'react';
-import Typography from '@mui/material/Typography';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import Collapse from '@mui/material/Collapse';
+import {
+    FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogTitle, DialogContent,
+    DialogActions, Checkbox, Typography, List, ListItemButton, ListItemText, Collapse, Menu,
+    Button, Tooltip, ListItemIcon, IconButton
+} from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import Menu from '@mui/material/Menu';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
 import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import { FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 
 function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -129,6 +123,7 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
                         name="title"
                         defaultValue={exercise.name}
                         autoFocus
+                        required
                     />
                     <br></br>
                     <FormControl sx={{ minWidth: 80, mt: 1 }}>
@@ -139,6 +134,7 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
                             label="date"
                             name="date"
                             defaultValue={exercise.status}
+                            required
                         >
                             <MenuItem value="recently_assigned">Recently Assigned</MenuItem>
                             <MenuItem value="do_today">Do Today</MenuItem>
@@ -225,6 +221,47 @@ class Patient extends Component {
             this.setState({ open: open });
         }
 
+        const handleComplete = async (event) => {
+            event.preventDefault();
+            const name = event.currentTarget.name;
+            const puid = this.state.uid
+
+            // Not sure why event.target.checked is the opposite value of expected (false when checked)
+            if (!event.target.checked) {
+                await fetch(`${process.env.REACT_APP_API}/api/updateExercise`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        puid,
+                        oldTitle: name,
+                        title: name,
+                        date: 'recently_assigned'
+                    })
+                }).then(async (res) => {
+                    this.updateExercises()
+                })
+                    .catch((err) => console.log(err))
+            } else {
+                await fetch(`${process.env.REACT_APP_API}/api/updateExercise`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        puid,
+                        oldTitle: name,
+                        title: name,
+                        date: 'completed'
+                    })
+                }).then(async (res) => {
+                    this.updateExercises()
+                })
+                    .catch((err) => console.log(err))
+            }
+        }
+
         const handleSubmit = async (event) => {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
@@ -267,7 +304,7 @@ class Patient extends Component {
                     </IconButton>
                 </Tooltip>
                 <List
-                    sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                    sx={{ width: '100%', maxWidth: 480, bgcolor: 'background.paper' }}
                     component="nav"
                     aria-labelledby="nested-list-subheader"
                 >
@@ -289,6 +326,7 @@ class Patient extends Component {
                                                         textOverflow: 'ellipsis'
                                                     }
                                                 }} />
+                                                <Checkbox checked={exercise.status === "completed"} name={exercise.name} onChange={handleComplete} />
                                                 <ExerciseOptionsMenu exercise={exercise} state={this.state} updateExercises={this.updateExercises} />
                                             </ListItemButton>
                                         } else return '';
@@ -311,6 +349,7 @@ class Patient extends Component {
                             label="Task Name"
                             name="title"
                             autoFocus
+                            required
                         />
                         <br></br>
                         <FormControl sx={{ minWidth: 80, mt: 1 }}>
@@ -320,6 +359,7 @@ class Patient extends Component {
                                 id="demo-simple-select-autowidth"
                                 label="date"
                                 name="date"
+                                required
                             >
                                 <MenuItem value="recently_assigned">Recently Assigned</MenuItem>
                                 <MenuItem value="do_today">Do Today</MenuItem>
