@@ -37,14 +37,14 @@ class Patient extends Component {
         const res = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${this.props.match.params.uid}`);
         const body = await res.json();
         if (res.status === 200) {
-          this.setState({exercises: body.body.exercises, first: body.body.first, last: body.body.last, status: body.body.status });
+            this.setState({ exercises: body.body.exercises, first: body.body.first, last: body.body.last, status: body.body.status });
         }
     }
 
-    
 
-    render() {    
-        
+
+    render() {
+
         const category_text = {
             fontWeight: "bold"
         };
@@ -68,8 +68,8 @@ class Patient extends Component {
                     date
                 })
             }).then((res) => window.location.reload())
-            .catch((err) => console.log(err))
-          };
+                .catch((err) => console.log(err))
+        };
 
         const handleDelete = async (event) => {
             event.preventDefault();
@@ -89,7 +89,7 @@ class Patient extends Component {
                     date
                 })
             }).then((res) => window.location.reload())
-            .catch((err) => console.log(err))
+                .catch((err) => console.log(err))
         };
 
         return (
@@ -98,12 +98,12 @@ class Patient extends Component {
                     {this.state.first} {this.state.last}
                 </Typography>
                 <Tooltip title="Upload Video">
-                    <IconButton aria-label="uploadVideo" sx={{padding: '15px', marginTop: '10px'}}>
+                    <IconButton aria-label="uploadVideo" sx={{ padding: '15px', marginTop: '10px' }}>
                         <VideoCameraBackIcon color="action" fontSize="large"></VideoCameraBackIcon>
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Direct Message">
-                    <IconButton aria-label="message" sx={{padding: '15px', marginTop: '10px', marginLeft: '15px'}}>
+                    <IconButton aria-label="message" sx={{ padding: '15px', marginTop: '10px', marginLeft: '15px' }}>
                         <EmailRoundedIcon color="action" fontSize="large"></EmailRoundedIcon>
                     </IconButton>
                 </Tooltip>
@@ -111,7 +111,7 @@ class Patient extends Component {
                     sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
                     component="nav"
                     aria-labelledby="nested-list-subheader"
-                    >
+                >
 
                     <ListItemButton onClick={() => this.setState({ open1: !this.state.open1 })}>
                         <ListItemText primaryTypographyProps={{ style: category_text }} primary="Recently Assigned" />
@@ -119,14 +119,16 @@ class Patient extends Component {
                     </ListItemButton>
                     <Collapse in={this.state.open1} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                        {this.state.exercises.map((exercise) => {
-                            if (exercise.status === "recently_assigned") {
-                                return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} primaryTypographyProps={{ style: {
-                                                                                                        whiteSpace: 'nowrap',
-                                                                                                        overflow: 'hidden',
-                                                                                                        textOverflow: 'ellipsis'
-                                                                                                    } }} />
+                            {this.state.exercises.map((exercise) => {
+                                if (exercise.status === "recently_assigned") {
+                                    return <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemText primary={exercise.name} primaryTypographyProps={{
+                                            style: {
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
+                                            }
+                                        }} />
                                         <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
@@ -142,14 +144,16 @@ class Patient extends Component {
                     </ListItemButton>
                     <Collapse in={this.state.open2} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                        {this.state.exercises.map((exercise) => {
-                            if (exercise.status === "do_today") {
-                                return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} primaryTypographyProps={{ style: {
-                                                                                                        whiteSpace: 'nowrap',
-                                                                                                        overflow: 'hidden',
-                                                                                                        textOverflow: 'ellipsis'
-                                                                                                    } }} />
+                            {this.state.exercises.map((exercise) => {
+                                if (exercise.status === "do_today") {
+                                    return <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemText primary={exercise.name} primaryTypographyProps={{
+                                            style: {
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
+                                            }
+                                        }} />
                                         <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
@@ -165,14 +169,16 @@ class Patient extends Component {
                     </ListItemButton>
                     <Collapse in={this.state.open3} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                        {this.state.exercises.map((exercise) => {
-                            if (exercise.status === "do_nextweek") {
-                                return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} primaryTypographyProps={{ style: {
-                                                                                                        whiteSpace: 'nowrap',
-                                                                                                        overflow: 'hidden',
-                                                                                                        textOverflow: 'ellipsis'
-                                                                                                    } }} />
+                            {this.state.exercises.map((exercise) => {
+                                if (exercise.status === "do_nextweek") {
+                                    return <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemText primary={exercise.name} primaryTypographyProps={{
+                                            style: {
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
+                                            }
+                                        }} />
                                         <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
@@ -188,14 +194,16 @@ class Patient extends Component {
                     </ListItemButton>
                     <Collapse in={this.state.open4} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                        {this.state.exercises.map((exercise) => {
-                            if (exercise.status === "do_later") {
-                                return <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemText primary={exercise.name} primaryTypographyProps={{ style: {
-                                                                                                        whiteSpace: 'nowrap',
-                                                                                                        overflow: 'hidden',
-                                                                                                        textOverflow: 'ellipsis'
-                                                                                                    } }} />
+                            {this.state.exercises.map((exercise) => {
+                                if (exercise.status === "do_later") {
+                                    return <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemText primary={exercise.name} primaryTypographyProps={{
+                                            style: {
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
+                                            }
+                                        }} />
                                         <IconButton aria-label="delete" name={exercise.name} id={exercise.status} onClick={handleDelete}>
                                             <DeleteIcon />
                                         </IconButton>
@@ -212,7 +220,7 @@ class Patient extends Component {
                 <Dialog open={this.state.showDialog} component="form" onSubmit={handleSubmit}>
                     <DialogTitle>Add Task</DialogTitle>
                     <DialogContent>
-                    <TextField
+                        <TextField
                             margin="normal"
                             id="title"
                             label="Task Name"
@@ -220,30 +228,30 @@ class Patient extends Component {
                             autoFocus
                         />
                         <br></br>
-                        <FormControl sx={{ minWidth: 80, mt: 1}}>
-                        <InputLabel id="demo-simple-select-autowidth-label">Date</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-autowidth-label"
-                            id="demo-simple-select-autowidth"
-                            label="date"
-                            name="date"
-                        >
-                            <MenuItem value="recently_assigned">Recently Assigned</MenuItem>
-                            <MenuItem value="do_today">Do Today</MenuItem>
-                            <MenuItem value="do_nextweek">Do Next Week</MenuItem>
-                            <MenuItem value="do_later">Do Later</MenuItem>
-                        </Select>
+                        <FormControl sx={{ minWidth: 80, mt: 1 }}>
+                            <InputLabel id="demo-simple-select-autowidth-label">Date</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-autowidth-label"
+                                id="demo-simple-select-autowidth"
+                                label="date"
+                                name="date"
+                            >
+                                <MenuItem value="recently_assigned">Recently Assigned</MenuItem>
+                                <MenuItem value="do_today">Do Today</MenuItem>
+                                <MenuItem value="do_nextweek">Do Next Week</MenuItem>
+                                <MenuItem value="do_later">Do Later</MenuItem>
+                            </Select>
                         </FormControl>
                     </DialogContent>
                     <DialogActions>
-                    <Button onClick={() => this.setState({ showDialog: !this.state.showDialog })}>Cancel</Button>
-                    <Button type="submit" variant="contained">Add Task</Button>
+                        <Button onClick={() => this.setState({ showDialog: !this.state.showDialog })}>Cancel</Button>
+                        <Button type="submit" variant="contained">Add Task</Button>
                     </DialogActions>
                 </Dialog>
             </div>
         );
     }
-  }
-  
+}
 
-  export default Patient;
+
+export default Patient;
