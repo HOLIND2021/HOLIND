@@ -7,8 +7,11 @@ import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
+import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import { FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 
 class Patient extends Component {
@@ -94,6 +97,16 @@ class Patient extends Component {
                 <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                     {this.state.first} {this.state.last}
                 </Typography>
+                <Tooltip title="Upload Video">
+                    <IconButton aria-label="uploadVideo" sx={{padding: '15px', marginTop: '10px'}}>
+                        <VideoCameraBackIcon color="action" fontSize="large"></VideoCameraBackIcon>
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Direct Message">
+                    <IconButton aria-label="message" sx={{padding: '15px', marginTop: '10px', marginLeft: '15px'}}>
+                        <EmailRoundedIcon color="action" fontSize="large"></EmailRoundedIcon>
+                    </IconButton>
+                </Tooltip>
                 <List
                     sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
                     component="nav"
