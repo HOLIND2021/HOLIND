@@ -11,6 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import {Link} from 'react-router-dom';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -56,6 +57,8 @@ export default function BasicTabs({ data }) {
   let overdue = data.filter((patient) => patient.status === 'Overdue');
   let completed = data.filter((patient) => patient.status === 'Completed');
 
+  let patientArrays = [upcoming, overdue, completed];
+
   return (
     <Box sx={{ width: '35em', marginLeft: 'auto', marginRight: 'auto' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -65,75 +68,37 @@ export default function BasicTabs({ data }) {
           <Tab label={<p style={{ marginLeft: '30px' }}>Completed</p>} {...a11yProps(2)} sx={{ marginRight: '30px' }} />
         </Tabs>
       </Box>
-      <TabPanel value={value} index={0}>
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {upcoming.map((patient) => (
-                <TableRow
-                  key={patient.first}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {patient.first} {patient.last}
-                  </TableCell>
+      {patientArrays.map((array, index) => (
+        <TabPanel value={value} index={index}>
+          <TableContainer component={Paper}>
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {overdue.map((patient) => (
-                <TableRow
-                  key={patient.first}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {patient.first} {patient.last}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {completed.map((patient) => (
-                <TableRow
-                  key={patient.first}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {patient.first} {patient.last}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </TabPanel>
+              </TableHead>
+              <TableBody>
+                {array.map((patient) => (
+                  <TableRow
+                    key={patient.first}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 }, textDecoration: "none" }}
+                    hover={true}
+                    component={Link}
+                    to={{
+                      pathname: `/patient/${patient.uid}`,
+                      state: patient
+                    }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {patient.first} {patient.last}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </TabPanel>
+      ))}
     </Box>
   );
 }
