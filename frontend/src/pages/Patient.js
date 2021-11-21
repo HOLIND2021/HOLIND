@@ -11,6 +11,62 @@ import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import Stack from '@mui/material/Stack';
+import DateAdapter from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
+
+function App({ children }) {
+    return (
+      <LocalizationProvider dateAdapter={DateAdapter}>{children}</LocalizationProvider>
+    );
+  }
+
+function CalendarDate() {
+    const [value, setValue] = React.useState(new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+(new Date().getDate()+1));
+    console.log(value)
+  
+    const handleChange = (newValue) => {
+      setValue(newValue);
+    };
+  
+    return (
+      <LocalizationProvider dateAdapter={DateAdapter}>
+        <Stack spacing={3}>
+          <MobileDatePicker
+            label="Date mobile"
+            inputFormat="MM/dd/yyyy"
+            value={value}
+            onChange={handleChange}
+            renderInput={(params) => <TextField id="caldate" name="caldate" {...params} />}
+          />
+        </Stack>
+      </LocalizationProvider>
+    );
+  }
+
+function EditCalendarDate({ exercise }) {
+    const [value, setValue] = React.useState(exercise.due);
+    console.log(exercise)
+  
+    const handleChange = (newValue) => {
+      setValue(newValue);
+    };
+  
+    return (
+      <LocalizationProvider dateAdapter={DateAdapter}>
+        <Stack spacing={3}>
+          <MobileDatePicker
+            label="Date mobile"
+            inputFormat="MM/dd/yyyy"
+            value={value}
+            onChange={handleChange}
+            renderInput={(params) => <TextField id="caldate" name="caldate" {...params} />}
+          />
+        </Stack>
+      </LocalizationProvider>
+    );
+  }
 
 function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -34,6 +90,8 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
         const title = exercise.name
         const date = exercise.status
         const puid = state.uid
+        const caldate = exercise.due
+        console.log(caldate)
 
         await fetch(`${process.env.REACT_APP_API}/api/deleteTask`, {
             method: 'DELETE',
@@ -43,7 +101,8 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
             body: JSON.stringify({
                 puid,
                 title,
-                date
+                date,
+                caldate
             })
         }).then(async (res) => {
             updateExercises()
@@ -58,6 +117,7 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
         const title = data.get('title');
         const date = data.get('date');
         const puid = state.uid
+        const caldate = data.get('caldate')
         console.log('Task Edited ' + title + ' for ' + date)
 
         await fetch(`${process.env.REACT_APP_API}/api/updateExercise`, {
@@ -69,7 +129,8 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
                 puid,
                 oldTitle: exercise.name,
                 title,
-                date
+                date,
+                caldate
             })
         }).then(async (res) => {
             updateExercises()
@@ -142,6 +203,9 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
                             <MenuItem value="do_later">Do Later</MenuItem>
                         </Select>
                     </FormControl>
+                    <br></br>
+                    <br></br>
+                    <EditCalendarDate exercise={exercise} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setShowEditDialog(false)}>Cancel</Button>
@@ -161,7 +225,8 @@ class Patient extends Component {
         status: "",
         uid: "",
         open: [true, true, true, true, false],
-        showDialog: false
+        showDialog: false,
+        caldate: ""
     }
 
     constructor(props) {
@@ -176,7 +241,7 @@ class Patient extends Component {
         const res = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${this.props.match.params.uid}`);
         const body = await res.json();
         if (res.status === 200) {
-            this.setState({ exercises: body.body.exercises, first: body.body.first, last: body.body.last, status: body.body.status });
+            this.setState({ exercises: body.body.exercises, first: body.body.first, last: body.body.last, status: body.body.status, caldate: body.body.caldate });
         }
     }
 
@@ -224,9 +289,10 @@ class Patient extends Component {
         const handleComplete = async (event) => {
             event.preventDefault();
             const name = event.currentTarget.name;
-            const puid = this.state.uid
+            const puid = this.state.uid;
+            const caldate = event.currentTarget.id;
+            console.log(caldate);
 
-            // Not sure why event.target.checked is the opposite value of expected (false when checked)
             if (!event.target.checked) {
                 await fetch(`${process.env.REACT_APP_API}/api/updateExercise`, {
                     method: 'PUT',
@@ -237,7 +303,8 @@ class Patient extends Component {
                         puid,
                         oldTitle: name,
                         title: name,
-                        date: 'recently_assigned'
+                        date: 'recently_assigned',
+                        caldate: caldate
                     })
                 }).then(async (res) => {
                     this.updateExercises()
@@ -253,7 +320,8 @@ class Patient extends Component {
                         puid,
                         oldTitle: name,
                         title: name,
-                        date: 'completed'
+                        date: 'completed',
+                        caldate: caldate
                     })
                 }).then(async (res) => {
                     this.updateExercises()
@@ -268,7 +336,9 @@ class Patient extends Component {
             const title = data.get('title');
             const date = data.get('date');
             const puid = this.state.uid
+            const caldate = data.get('caldate')
             console.log('Task Created ' + title + ' for ' + date)
+            console.log(caldate)
 
             await fetch(`${process.env.REACT_APP_API}/api/updatePatient`, {
                 method: 'POST',
@@ -278,7 +348,8 @@ class Patient extends Component {
                 body: JSON.stringify({
                     puid,
                     title,
-                    date
+                    date,
+                    caldate
                 })
             }).then(async (res) => {
                 this.updateExercises()
@@ -326,7 +397,7 @@ class Patient extends Component {
                                                         textOverflow: 'ellipsis'
                                                     }
                                                 }} />
-                                                <Checkbox checked={exercise.status === "completed"} name={exercise.name} onChange={handleComplete} />
+                                                <Checkbox checked={exercise.status === "completed"} name={exercise.name} id={exercise.due} onChange={handleComplete} />
                                                 <ExerciseOptionsMenu exercise={exercise} state={this.state} updateExercises={this.updateExercises} />
                                             </ListItemButton>
                                         } else return '';
@@ -367,6 +438,9 @@ class Patient extends Component {
                                 <MenuItem value="do_later">Do Later</MenuItem>
                             </Select>
                         </FormControl>
+                        <br></br>
+                        <br></br>
+                        <CalendarDate />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => this.setState({ showDialog: !this.state.showDialog })}>Cancel</Button>

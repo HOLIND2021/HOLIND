@@ -87,10 +87,11 @@ exports.updatePatient = async (req, res, next) => {
     const uid = body.puid;
     const title = body.title;
     const date = body.date;
+    const caldate = body.caldate
 
 
     await updateDoc(doc(db, "patients", uid), {
-        exercises: arrayUnion({name: title, status: date})
+        exercises: arrayUnion({name: title, status: date, due: caldate})
     })
 
     const docRef = doc(db, "patients", uid);
@@ -113,6 +114,7 @@ exports.updateExercise = async (req, res, next) => {
     const oldTitle = body.oldTitle;
     const title = body.title;
     const date = body.date;
+    const caldate = body.caldate
 
     const docRef = doc(db, "patients", uid);
     const docSnap = await getDoc(docRef);
@@ -122,6 +124,7 @@ exports.updateExercise = async (req, res, next) => {
         exercises = exercises.map((exercise) => {
             if (exercise.name === oldTitle) {
                 return {
+                    due: caldate,
                     name: title,
                     status: date
                 }
@@ -165,9 +168,10 @@ exports.deleteTask = async (req, res, next) => {
     const uid = body.puid;
     const title = body.title;
     const date = body.date;
+    const caldate = body.caldate
 
     await updateDoc(doc(db, "patients", uid), {
-        exercises: arrayRemove({name: title, status: date})
+        exercises: arrayRemove({due: caldate, name: title, status: date})
     })
 
     const docRef = doc(db, "patients", uid);
