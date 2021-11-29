@@ -11,6 +11,7 @@ import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
 import Stack from '@mui/material/Stack';
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -24,7 +25,6 @@ function App({ children }) {
 
 function CalendarDate() {
     const [value, setValue] = React.useState(new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+(new Date().getDate()+1));
-    console.log(value)
   
     const handleChange = (newValue) => {
       setValue(newValue);
@@ -34,7 +34,7 @@ function CalendarDate() {
       <LocalizationProvider dateAdapter={DateAdapter}>
         <Stack spacing={3}>
           <MobileDatePicker
-            label="Date mobile"
+            label="Due Date"
             inputFormat="MM/dd/yyyy"
             value={value}
             onChange={handleChange}
@@ -47,7 +47,6 @@ function CalendarDate() {
 
 function EditCalendarDate({ exercise }) {
     const [value, setValue] = React.useState(exercise.due);
-    console.log(exercise)
   
     const handleChange = (newValue) => {
       setValue(newValue);
@@ -57,7 +56,7 @@ function EditCalendarDate({ exercise }) {
       <LocalizationProvider dateAdapter={DateAdapter}>
         <Stack spacing={3}>
           <MobileDatePicker
-            label="Date mobile"
+            label="Due Date"
             inputFormat="MM/dd/yyyy"
             value={value}
             onChange={handleChange}
@@ -88,10 +87,9 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
         setAnchorEl(null);
         event.preventDefault();
         const title = exercise.name
-        const date = exercise.status
         const puid = state.uid
+        const status = exercise.status
         const caldate = exercise.due
-        console.log(caldate)
 
         await fetch(`${process.env.REACT_APP_API}/api/deleteTask`, {
             method: 'DELETE',
@@ -101,7 +99,7 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
             body: JSON.stringify({
                 puid,
                 title,
-                date,
+                status,
                 caldate
             })
         }).then(async (res) => {
@@ -115,10 +113,9 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const title = data.get('title');
-        const date = data.get('date');
         const puid = state.uid
         const caldate = data.get('caldate')
-        console.log('Task Edited ' + title + ' for ' + date)
+        console.log('Task Edited ' + title + ' for ' + caldate)
 
         await fetch(`${process.env.REACT_APP_API}/api/updateExercise`, {
             method: 'PUT',
@@ -129,7 +126,7 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
                 puid,
                 oldTitle: exercise.name,
                 title,
-                date,
+                status: exercise.status,
                 caldate
             })
         }).then(async (res) => {
@@ -186,23 +183,6 @@ function ExerciseOptionsMenu({ exercise, state, updateExercises }) {
                         autoFocus
                         required
                     />
-                    <br></br>
-                    <FormControl sx={{ minWidth: 80, mt: 1 }}>
-                        <InputLabel id="demo-simple-select-autowidth-label">Date</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-autowidth-label"
-                            id="demo-simple-select-autowidth"
-                            label="date"
-                            name="date"
-                            defaultValue={exercise.status}
-                            required
-                        >
-                            <MenuItem value="recently_assigned">Recently Assigned</MenuItem>
-                            <MenuItem value="do_today">Do Today</MenuItem>
-                            <MenuItem value="do_nextweek">Do Next Week</MenuItem>
-                            <MenuItem value="do_later">Do Later</MenuItem>
-                        </Select>
-                    </FormControl>
                     <br></br>
                     <br></br>
                     <EditCalendarDate exercise={exercise} />
@@ -263,17 +243,17 @@ class Patient extends Component {
 
         const taskList = [
             {
-                name: "Recently Assigned",
-                value: "recently_assigned"
+                name: "Today",
+                value: "today"
             }, {
-                name: "Do Today",
-                value: "do_today"
+                name: "Tomorrow",
+                value: "tomorrow"
             }, {
-                name: "Do Next Week",
-                value: "do_nextweek"
+                name: "This Week",
+                value: "this_week"
             }, {
-                name: "Do Later",
-                value: "do_later"
+                name: "Later",
+                value: "later"
             }, {
                 name: "Completed",
                 value: "completed"
@@ -291,7 +271,6 @@ class Patient extends Component {
             const name = event.currentTarget.name;
             const puid = this.state.uid;
             const caldate = event.currentTarget.id;
-            console.log(caldate);
 
             if (!event.target.checked) {
                 await fetch(`${process.env.REACT_APP_API}/api/updateExercise`, {
@@ -303,7 +282,7 @@ class Patient extends Component {
                         puid,
                         oldTitle: name,
                         title: name,
-                        date: 'recently_assigned',
+                        status: '',
                         caldate: caldate
                     })
                 }).then(async (res) => {
@@ -320,7 +299,7 @@ class Patient extends Component {
                         puid,
                         oldTitle: name,
                         title: name,
-                        date: 'completed',
+                        status: 'completed',
                         caldate: caldate
                     })
                 }).then(async (res) => {
@@ -334,11 +313,9 @@ class Patient extends Component {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
             const title = data.get('title');
-            const date = data.get('date');
             const puid = this.state.uid
             const caldate = data.get('caldate')
-            console.log('Task Created ' + title + ' for ' + date)
-            console.log(caldate)
+            console.log('Task Created ' + title + ' for ' + caldate)
 
             await fetch(`${process.env.REACT_APP_API}/api/updatePatient`, {
                 method: 'POST',
@@ -348,7 +325,7 @@ class Patient extends Component {
                 body: JSON.stringify({
                     puid,
                     title,
-                    date,
+                    status: "",
                     caldate
                 })
             }).then(async (res) => {
@@ -388,15 +365,39 @@ class Patient extends Component {
                             <Collapse in={this.state.open[index]} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
                                     {this.state.exercises.map((exercise) => {
-                                        if (exercise.status === task.value) {
+                                        let date = new Date(exercise.due);
+                                        let todaysDate = new Date();
+                                        let statusValue = "";
+                                        let tomorrowDate = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate() + 1);
+                                        let dayAfterTomorrowDate = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate() + 2);
+                                        let lastDayofWeekDate = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate() + 6);
+                                        if (exercise.status === "completed") {
+                                            statusValue = "completed";
+                                        // check if due date is today
+                                        } else if (date.setHours(0,0,0,0) === todaysDate.setHours(0,0,0,0)) {
+                                            statusValue = "today";
+                                        // check if date is tomorrow
+                                        } else if (date.setHours(0,0,0,0) === tomorrowDate.setHours(0,0,0,0)) {
+                                            statusValue = "tomorrow";
+                                        } else if (date >= dayAfterTomorrowDate && date <= lastDayofWeekDate) {
+                                            statusValue = "this_week";
+                                        } else if (date >= lastDayofWeekDate) {
+                                            statusValue = "later";
+                                        }
+
+                                        if (statusValue === task.value) {
                                             return <ListItemButton sx={{ pl: 4 }}>
                                                 <ListItemText primary={exercise.name} primaryTypographyProps={{
                                                     style: {
                                                         whiteSpace: 'nowrap',
                                                         overflow: 'hidden',
-                                                        textOverflow: 'ellipsis'
+                                                        textOverflow: 'ellipsis', 
+                                                        maxWidth: "220px",
+                                                        paddingRight: "10px"
                                                     }
                                                 }} />
+                                                <CalendarTodayRoundedIcon fontSize="small"></CalendarTodayRoundedIcon>
+                                                <Typography sx={{paddingLeft: "10px", paddingRight: "10px"}}>{new Date(exercise.due).toLocaleString('en-En',{weekday: "short", month: "short", day: "numeric"})}</Typography>
                                                 <Checkbox checked={exercise.status === "completed"} name={exercise.name} id={exercise.due} onChange={handleComplete} />
                                                 <ExerciseOptionsMenu exercise={exercise} state={this.state} updateExercises={this.updateExercises} />
                                             </ListItemButton>
@@ -422,22 +423,6 @@ class Patient extends Component {
                             autoFocus
                             required
                         />
-                        <br></br>
-                        <FormControl sx={{ minWidth: 80, mt: 1 }}>
-                            <InputLabel id="demo-simple-select-autowidth-label">Date</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-autowidth-label"
-                                id="demo-simple-select-autowidth"
-                                label="date"
-                                name="date"
-                                required
-                            >
-                                <MenuItem value="recently_assigned">Recently Assigned</MenuItem>
-                                <MenuItem value="do_today">Do Today</MenuItem>
-                                <MenuItem value="do_nextweek">Do Next Week</MenuItem>
-                                <MenuItem value="do_later">Do Later</MenuItem>
-                            </Select>
-                        </FormControl>
                         <br></br>
                         <br></br>
                         <CalendarDate />

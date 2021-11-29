@@ -86,12 +86,11 @@ exports.updatePatient = async (req, res, next) => {
     const body = req.body;
     const uid = body.puid;
     const title = body.title;
-    const date = body.date;
-    const caldate = body.caldate
-
+    const status = body.status;
+    const caldate = body.caldate;
 
     await updateDoc(doc(db, "patients", uid), {
-        exercises: arrayUnion({name: title, status: date, due: caldate})
+        exercises: arrayUnion({name: title, due: caldate, status: status})
     })
 
     const docRef = doc(db, "patients", uid);
@@ -113,7 +112,7 @@ exports.updateExercise = async (req, res, next) => {
     const uid = body.puid;
     const oldTitle = body.oldTitle;
     const title = body.title;
-    const date = body.date;
+    const status = body.status;
     const caldate = body.caldate
 
     const docRef = doc(db, "patients", uid);
@@ -126,7 +125,7 @@ exports.updateExercise = async (req, res, next) => {
                 return {
                     due: caldate,
                     name: title,
-                    status: date
+                    status: status
                 }
             } else return exercise;
         })
@@ -167,11 +166,11 @@ exports.deleteTask = async (req, res, next) => {
     const body = req.body;
     const uid = body.puid;
     const title = body.title;
-    const date = body.date;
+    const status = body.status;
     const caldate = body.caldate
 
     await updateDoc(doc(db, "patients", uid), {
-        exercises: arrayRemove({due: caldate, name: title, status: date})
+        exercises: arrayRemove({due: caldate, name: title, status: status})
     })
 
     const docRef = doc(db, "patients", uid);
