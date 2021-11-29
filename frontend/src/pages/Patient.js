@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    FormControl, InputLabel, Select, MenuItem, TextField, Dialog, DialogTitle, DialogContent,
+    MenuItem, TextField, Dialog, DialogTitle, DialogContent,
     DialogActions, Checkbox, Typography, List, ListItemButton, ListItemText, Collapse, Menu,
     Button, Tooltip, ListItemIcon, IconButton
 } from '@mui/material';
@@ -16,12 +16,6 @@ import Stack from '@mui/material/Stack';
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
-
-function App({ children }) {
-    return (
-      <LocalizationProvider dateAdapter={DateAdapter}>{children}</LocalizationProvider>
-    );
-  }
 
 function CalendarDate() {
     const [value, setValue] = React.useState(new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+(new Date().getDate()+1));
@@ -204,7 +198,7 @@ class Patient extends Component {
         last: "",
         status: "",
         uid: "",
-        open: [true, true, true, true, false],
+        open: [true, true, true, true, true, false],
         showDialog: false,
         caldate: ""
     }
@@ -243,6 +237,9 @@ class Patient extends Component {
 
         const taskList = [
             {
+                name: "Overdue",
+                value: "overdue"
+            }, {
                 name: "Today",
                 value: "today"
             }, {
@@ -364,7 +361,7 @@ class Patient extends Component {
                             </ListItemButton>
                             <Collapse in={this.state.open[index]} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                    {this.state.exercises.map((exercise) => {
+                                    {this.state.exercises.sort((a,b) => (a.due > b.due) ? 1 : (b.due > a.due) ? -1 : 0).map((exercise) => { // sort exercises in ascending order by due date
                                         let date = new Date(exercise.due);
                                         let todaysDate = new Date();
                                         let statusValue = "";
@@ -379,10 +376,15 @@ class Patient extends Component {
                                         // check if date is tomorrow
                                         } else if (date.setHours(0,0,0,0) === tomorrowDate.setHours(0,0,0,0)) {
                                             statusValue = "tomorrow";
+                                        // check if date is this week
                                         } else if (date >= dayAfterTomorrowDate && date <= lastDayofWeekDate) {
                                             statusValue = "this_week";
+                                        // check if date is after this week
                                         } else if (date >= lastDayofWeekDate) {
                                             statusValue = "later";
+                                        // check if date is before today
+                                        } else if (date < todaysDate) {
+                                            statusValue = "overdue";
                                         }
 
                                         if (statusValue === task.value) {
