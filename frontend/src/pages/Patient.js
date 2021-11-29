@@ -9,6 +9,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
+import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
 import CalendarDate from '../components/CalendarDate';
 import ExerciseOptionsMenu from '../components/ExerciseOptionsMenu';
 
@@ -167,6 +168,11 @@ class Patient extends Component {
                 <Tooltip title="Direct Message">
                     <IconButton aria-label="message" sx={{ padding: '15px', marginTop: '10px', marginLeft: '15px' }}>
                         <EmailRoundedIcon color="action" fontSize="large"></EmailRoundedIcon>
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Patient Analytics">
+                    <IconButton aria-label="message" sx={{ padding: '15px', marginTop: '10px', marginLeft: '15px' }}>
+                        <AssessmentRoundedIcon color="action" fontSize="large"></AssessmentRoundedIcon>
                     </IconButton>
                 </Tooltip>
                 <List
