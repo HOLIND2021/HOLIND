@@ -53,9 +53,26 @@ export default function BasicTabs({ data }) {
     setValue(newValue);
   };
 
-  let upcoming = data.filter((patient) => patient.status === 'Upcoming');
-  let overdue = data.filter((patient) => patient.status === 'Overdue');
-  let completed = data.filter((patient) => patient.status === 'Completed');
+  let upcoming = [];
+  let overdue = [];
+  let completed = [];
+
+  data.map((patient) => {
+    let earliestTask = patient?.exercises?.filter(task => task.due && task.status !== "completed").sort((a,b) => (a.due > b.due) ? 1 : (b.due > a.due) ? -1 : 0)[0];
+    patient.earliestTask = earliestTask;
+    if (earliestTask) {
+      let date = new Date(earliestTask.due);
+      let todaysDate = new Date();
+      if (date.setHours(0,0,0,0) >= todaysDate.setHours(0,0,0,0)) {
+        upcoming.push(patient);
+      } else if (date.setHours(0,0,0,0) < todaysDate.setHours(0,0,0,0)) {
+        overdue.push(patient);
+      }
+    } else {
+      completed.push(patient);
+    }
+    return patient;
+  })
 
   let patientArrays = [upcoming, overdue, completed];
 
@@ -75,6 +92,7 @@ export default function BasicTabs({ data }) {
               <TableHead>
                 <TableRow>
                   <TableCell>Name</TableCell>
+                  <TableCell align="right">Task Due Date</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -91,6 +109,9 @@ export default function BasicTabs({ data }) {
                   >
                     <TableCell component="th" scope="row">
                       {patient.first} {patient.last}
+                    </TableCell>
+                    <TableCell component="th" scope="row" align="right">
+                      {patient.earliestTask ? patient.earliestTask.due : 'Completed'}
                     </TableCell>
                   </TableRow>
                 ))}
