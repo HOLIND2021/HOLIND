@@ -8,6 +8,8 @@ class Home extends Component {
   state = {
     data: [],
     user: {},
+    uid: '',
+    signingIn: true,
     firstName: '',
     lastName: '',
     role: '',
@@ -17,37 +19,43 @@ class Home extends Component {
 
   componentDidMount() {
     let patients;
-    this.getPatients()
-      .then(res => { patients = res.body })
-      .catch(err => console.log(err));
-    firebaseAuth.onAuthStateChanged(async (user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        const uid = user.uid;
-        this.setState({ user: user })
+    this.getPatients().then((res) => patients = res.body)
+    .catch((err) => console.log(err));
 
-        const res = await fetch(`${process.env.REACT_APP_API}/api/user/${uid}`);
-        const body = await res.json();
-        if (res.status === 200) {
-          this.setState({ firstName: body.body.firstName, lastName: body.body.lastName, role: body.body.role, pid: body.body.pid });
-          if (body.body.role === 'patient') {
-            this.setState({ title: ' My Tasks' })
-            const patientRes = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${body.body.pid}`);
-            const patientBody = await patientRes.json();
-            if (patientRes.status === 200) {
-              this.setState({ data: patientBody.body.exercises })
-            }
-          } else {
-            this.setState({ title: `My Patient's Treatments` })
-            this.setState({ data: patients })
+    this.authUser().then(async (user) => {
+      this.setState({ user, uid: user.uid })
+      const res = await fetch(`${process.env.REACT_APP_API}/api/user/${user.uid}`);
+      const body = await res.json();
+      if (res.status === 200) {
+        this.setState({ firstName: body.body.firstName, lastName: body.body.lastName, role: body.body.role, pid: body.body.pid });
+        if (body.body.role === 'patient') {
+          this.setState({ title: ' My Tasks' })
+          const patientRes = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${body.body.pid}`);
+          const patientBody = await patientRes.json();
+          if (patientRes.status === 200) {
+            this.setState({ data: patientBody.body.exercises })
           }
+        } else {
+          this.setState({ title: `My Patient's Treatments` })
+          this.setState({ data: patients })
         }
+        this.setState({ signingIn: false })
       } else {
-        // User is signed out
-        // ...
+        throw Error(body.message);
       }
-    });
+    })
+  }
+
+  authUser() {
+    return new Promise((resolve, reject) => {
+      firebaseAuth.onAuthStateChanged(async (user) => {
+        if (user) {
+          resolve(user);
+        } else {
+          reject('User not logged in');
+        }
+      })
+    })
   }
 
   getPatients = async () => {
@@ -61,6 +69,8 @@ class Home extends Component {
   }
 
   render() {
+    if (this.state.signingIn) return null;
+
     let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -81,7 +91,6 @@ class Home extends Component {
     }
 
     return (
-
       <div className='home'>
         <Typography variant="h5">
           {day}, {month} {currentDate}
@@ -89,13 +98,12 @@ class Home extends Component {
         <Typography variant="h4">
           {greeting}, {this.state.firstName} {this.state.lastName}
         </Typography>
-        {this.state.firstName ? 
         <div>
           <br></br>
           <br></br>
           <Typography variant="h4" fontWeight="bold">{this.state.title}</Typography><br></br>
           <Tabs data={this.state.data} role={this.state.role} pid={this.state.pid}></Tabs>
-        </div> : ''}
+        </div>
       </div>
     );
   }

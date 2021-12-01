@@ -35,17 +35,17 @@ class Patient extends Component {
     async componentDidMount() {
         firebaseAuth.onAuthStateChanged(async (user) => {
             if (user) {
-              // User is signed in, see docs for a list of available properties
-              // https://firebase.google.com/docs/reference/js/firebase.User
-              const uid = user.uid;
-              const res = await fetch(`${process.env.REACT_APP_API}/api/user/${uid}`);
-              const body = await res.json();
-              if (res.status === 200) {
-                this.setState({ user: body.body });
-              }
+                // User is signed in, see docs for a list of available properties
+                // https://firebase.google.com/docs/reference/js/firebase.User
+                const uid = user.uid;
+                const res = await fetch(`${process.env.REACT_APP_API}/api/user/${uid}`);
+                const body = await res.json();
+                if (res.status === 200) {
+                    this.setState({ user: body.body });
+                }
             } else {
-              // User is signed out
-              // ...
+                // User is signed out
+                // ...
             }
         });
         this.setState({
@@ -69,6 +69,7 @@ class Patient extends Component {
     }
 
     render() {
+        if (!this.state.user) return null;
 
         const category_text = {
             fontWeight: "bold"
@@ -168,8 +169,7 @@ class Patient extends Component {
                 this.updateExercises()
                 this.setState({ showDialog: false })
 
-            })
-                .catch((err) => console.log(err))
+            }).catch((err) => console.log(err))
         };
 
         return (
@@ -187,7 +187,7 @@ class Patient extends Component {
                         <EmailRoundedIcon color="action" fontSize="large"></EmailRoundedIcon>
                     </IconButton>
                 </Tooltip>
-                {this.state.user && this.state.user.role !== 'patient' ? <Tooltip title="Patient Analytics">
+                {this.state.user.role !== 'patient' ? <Tooltip title="Patient Analytics">
                     <IconButton aria-label="message" sx={{ padding: '15px', marginTop: '10px', marginLeft: '15px' }}>
                         <AssessmentRoundedIcon color="action" fontSize="large"></AssessmentRoundedIcon>
                     </IconButton>
@@ -205,7 +205,7 @@ class Patient extends Component {
                             </ListItemButton>
                             <Collapse in={this.state.open[index]} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                    {this.state.exercises.sort((a,b) => (a.due > b.due) ? 1 : (b.due > a.due) ? -1 : 0).map((exercise) => { // sort exercises in ascending order by due date
+                                    {this.state.exercises.sort((a, b) => (a.due > b.due) ? 1 : (b.due > a.due) ? -1 : 0).map((exercise) => { // sort exercises in ascending order by due date
                                         let date = new Date(exercise.due);
                                         let todaysDate = new Date();
                                         let statusValue = "";
@@ -214,19 +214,19 @@ class Patient extends Component {
                                         let lastDayofWeekDate = new Date(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate() + 6);
                                         if (exercise.status === "completed") {
                                             statusValue = "completed";
-                                        // check if due date is today
-                                        } else if (date.setHours(0,0,0,0) === todaysDate.setHours(0,0,0,0)) {
+                                            // check if due date is today
+                                        } else if (date.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0)) {
                                             statusValue = "today";
-                                        // check if date is tomorrow
-                                        } else if (date.setHours(0,0,0,0) === tomorrowDate.setHours(0,0,0,0)) {
+                                            // check if date is tomorrow
+                                        } else if (date.setHours(0, 0, 0, 0) === tomorrowDate.setHours(0, 0, 0, 0)) {
                                             statusValue = "tomorrow";
-                                        // check if date is this week
+                                            // check if date is this week
                                         } else if (date >= dayAfterTomorrowDate && date <= lastDayofWeekDate) {
                                             statusValue = "this_week";
-                                        // check if date is after this week
+                                            // check if date is after this week
                                         } else if (date >= lastDayofWeekDate) {
                                             statusValue = "later";
-                                        // check if date is before today
+                                            // check if date is before today
                                         } else if (date < todaysDate) {
                                             statusValue = "overdue";
                                         }
@@ -237,15 +237,15 @@ class Patient extends Component {
                                                     style: {
                                                         whiteSpace: 'nowrap',
                                                         overflow: 'hidden',
-                                                        textOverflow: 'ellipsis', 
+                                                        textOverflow: 'ellipsis',
                                                         maxWidth: "220px",
                                                         paddingRight: "10px"
                                                     }
                                                 }} />
                                                 <CalendarTodayRoundedIcon fontSize="small"></CalendarTodayRoundedIcon>
-                                                <Typography sx={{paddingLeft: "10px", paddingRight: "10px"}}>{new Date(exercise.due).toLocaleString('en-En',{weekday: "short", month: "short", day: "numeric"})}</Typography>
+                                                <Typography sx={{ paddingLeft: "10px", paddingRight: "10px" }}>{new Date(exercise.due).toLocaleString('en-En', { weekday: "short", month: "short", day: "numeric" })}</Typography>
                                                 <Checkbox checked={exercise.status === "completed"} name={exercise.name} id={exercise.due} onChange={handleComplete} />
-                                                {this.state.user && this.state.user.role !== 'patient' ? <ExerciseOptionsMenu exercise={exercise} state={this.state} updateExercises={this.updateExercises} /> : ''}
+                                                {this.state.user.role !== 'patient' ? <ExerciseOptionsMenu exercise={exercise} state={this.state} updateExercises={this.updateExercises} /> : ''}
                                             </ListItemButton>
                                         } else return '';
                                     })}
@@ -255,7 +255,7 @@ class Patient extends Component {
                     ))}
                 </List>
 
-                {this.state.user && this.state.user.role !== 'patient' ? <Button variant="outlined" sx={{ marginTop: '20px' }} onClick={() => this.setState({ showDialog: !this.state.showDialog })}>
+                {this.state.user.role !== 'patient' ? <Button variant="outlined" sx={{ marginTop: '20px' }} onClick={() => this.setState({ showDialog: !this.state.showDialog })}>
                     Add Task
                 </Button> : ''}
                 <Dialog open={this.state.showDialog} component="form" onSubmit={handleSubmit}>

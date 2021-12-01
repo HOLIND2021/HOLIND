@@ -5,6 +5,7 @@ const controllers = require('./../controllers/controllers');
 router.get('/patients', controllers.patients);
 router.get('/user/:uid', controllers.user);
 router.post('/createUser', controllers.createUser);
+router.post('/createPatient', controllers.createPatient);
 router.post('/updatePatient', controllers.updatePatient);
 router.put('/updateExercise', controllers.updateExercise);
 router.get('/getPatient/:uid', controllers.getPatient);
