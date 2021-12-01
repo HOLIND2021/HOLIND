@@ -9,25 +9,39 @@ class Home extends Component {
     data: [],
     user: {},
     firstName: '',
-    lastName: ''
+    lastName: '',
+    role: '',
+    pid: '',
+    title: '',
   }
 
   componentDidMount() {
+    let patients;
     this.getPatients()
-      .then(res => this.setState({ data: res.body }))
+      .then(res => { patients = res.body })
       .catch(err => console.log(err));
-
     firebaseAuth.onAuthStateChanged(async (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
         const uid = user.uid;
-        this.setState({user: user})
-        
+        this.setState({ user: user })
+
         const res = await fetch(`${process.env.REACT_APP_API}/api/user/${uid}`);
         const body = await res.json();
         if (res.status === 200) {
-          this.setState({firstName: body.body.firstName, lastName: body.body.lastName });
+          this.setState({ firstName: body.body.firstName, lastName: body.body.lastName, role: body.body.role, pid: body.body.pid });
+          if (body.body.role === 'patient') {
+            this.setState({ title: ' My Tasks' })
+            const patientRes = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${body.body.pid}`);
+            const patientBody = await patientRes.json();
+            if (patientRes.status === 200) {
+              this.setState({ data: patientBody.body.exercises })
+            }
+          } else {
+            this.setState({ title: `My Patient's Treatments` })
+            this.setState({ data: patients })
+          }
         }
       } else {
         // User is signed out
@@ -75,10 +89,13 @@ class Home extends Component {
         <Typography variant="h4">
           {greeting}, {this.state.firstName} {this.state.lastName}
         </Typography>
-        <br></br>
-        <br></br>
-        <Typography variant="h4" fontWeight="bold">My Patient's Treatments</Typography><br></br>
-        <Tabs data={this.state.data}></Tabs>
+        {this.state.firstName ? 
+        <div>
+          <br></br>
+          <br></br>
+          <Typography variant="h4" fontWeight="bold">{this.state.title}</Typography><br></br>
+          <Tabs data={this.state.data} role={this.state.role} pid={this.state.pid}></Tabs>
+        </div> : ''}
       </div>
     );
   }

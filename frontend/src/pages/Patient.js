@@ -12,6 +12,7 @@ import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
 import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
 import CalendarDate from '../components/CalendarDate';
 import ExerciseOptionsMenu from '../components/ExerciseOptionsMenu';
+import { firebaseAuth } from '../Firebase';
 
 class Patient extends Component {
     state = {
@@ -20,6 +21,7 @@ class Patient extends Component {
         last: "",
         status: "",
         uid: "",
+        user: null,
         open: [true, true, true, true, true, false],
         showDialog: false,
         caldate: ""
@@ -31,6 +33,21 @@ class Patient extends Component {
     }
 
     async componentDidMount() {
+        firebaseAuth.onAuthStateChanged(async (user) => {
+            if (user) {
+              // User is signed in, see docs for a list of available properties
+              // https://firebase.google.com/docs/reference/js/firebase.User
+              const uid = user.uid;
+              const res = await fetch(`${process.env.REACT_APP_API}/api/user/${uid}`);
+              const body = await res.json();
+              if (res.status === 200) {
+                this.setState({ user: body.body });
+              }
+            } else {
+              // User is signed out
+              // ...
+            }
+        });
         this.setState({
             uid: this.props.match.params.uid
         });
@@ -170,11 +187,11 @@ class Patient extends Component {
                         <EmailRoundedIcon color="action" fontSize="large"></EmailRoundedIcon>
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Patient Analytics">
+                {this.state.user && this.state.user.role !== 'patient' ? <Tooltip title="Patient Analytics">
                     <IconButton aria-label="message" sx={{ padding: '15px', marginTop: '10px', marginLeft: '15px' }}>
                         <AssessmentRoundedIcon color="action" fontSize="large"></AssessmentRoundedIcon>
                     </IconButton>
-                </Tooltip>
+                </Tooltip> : ''}
                 <List
                     sx={{ width: '100%', maxWidth: 480, bgcolor: 'background.paper' }}
                     component="nav"
@@ -228,7 +245,7 @@ class Patient extends Component {
                                                 <CalendarTodayRoundedIcon fontSize="small"></CalendarTodayRoundedIcon>
                                                 <Typography sx={{paddingLeft: "10px", paddingRight: "10px"}}>{new Date(exercise.due).toLocaleString('en-En',{weekday: "short", month: "short", day: "numeric"})}</Typography>
                                                 <Checkbox checked={exercise.status === "completed"} name={exercise.name} id={exercise.due} onChange={handleComplete} />
-                                                <ExerciseOptionsMenu exercise={exercise} state={this.state} updateExercises={this.updateExercises} />
+                                                {this.state.user && this.state.user.role !== 'patient' ? <ExerciseOptionsMenu exercise={exercise} state={this.state} updateExercises={this.updateExercises} /> : ''}
                                             </ListItemButton>
                                         } else return '';
                                     })}
@@ -238,9 +255,9 @@ class Patient extends Component {
                     ))}
                 </List>
 
-                <Button variant="outlined" sx={{ marginTop: '20px' }} onClick={() => this.setState({ showDialog: !this.state.showDialog })}>
+                {this.state.user && this.state.user.role !== 'patient' ? <Button variant="outlined" sx={{ marginTop: '20px' }} onClick={() => this.setState({ showDialog: !this.state.showDialog })}>
                     Add Task
-                </Button>
+                </Button> : ''}
                 <Dialog open={this.state.showDialog} component="form" onSubmit={handleSubmit}>
                     <DialogTitle>Add Task</DialogTitle>
                     <DialogContent>

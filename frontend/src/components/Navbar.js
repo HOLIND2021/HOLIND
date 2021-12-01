@@ -36,6 +36,8 @@ function Navbar() {
     }
 
     const [user, setUser] = useState(0);
+    const [role, setRole] = useState(null);
+    const [pid, setPid] = useState(null);
 
     firebaseAuth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -43,6 +45,12 @@ function Navbar() {
         // https://firebase.google.com/docs/reference/js/firebase.User
         setUser(user);
 
+        const res = await fetch(`${process.env.REACT_APP_API}/api/user/${user.uid}`);
+        const body = await res.json();
+        if (res.status === 200) {
+          setRole(body.body.role);
+          setPid(body.body.pid);
+        }
       } else {
         // User is signed out
         // ...
@@ -94,14 +102,16 @@ function Navbar() {
                         </Link>
                     </li>
                     {NavbarData.map((item, index) => {
-                        return (
-                            <li key={index} className={item.cName}>
-                                <Link to={item.path}>
-                                     {item.icon}
-                                     <span>{item.title}</span>
-                                </Link>
-                            </li>
-                        );
+                        if (item.role === 'all' || item.role === role || (item.role === 'clinical' && role !== 'patient')) {
+                            return (
+                                <li key={index} className={item.cName}>
+                                    <Link to={item.path + (role === 'patient' && item.title === 'Tasks' ? pid : '')}>
+                                         {item.icon}
+                                         <span>{item.title}</span>
+                                    </Link>
+                                </li>
+                            );
+                        } else return '';
                     })}
                 </ul>
             </nav>
