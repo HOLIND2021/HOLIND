@@ -22,7 +22,7 @@ export const NavbarData = [
     }, {
         title: 'Tasks',
         path: '/patient/',
-        icon: <AssignmentIcon />,
+        icon: <FaIcons.FaClipboardList />,
         cName: 'nav-text',
         role: 'patient'
     }, {
