@@ -210,7 +210,7 @@ class Patient extends Component {
                         <AssessmentRoundedIcon color="action" fontSize="large"></AssessmentRoundedIcon>
                     </IconButton>
                 </Tooltip> : ''}
-                {!this.state.registered ? <Tooltip title="Invite Patient">
+                {this.state.user.role !== 'patient' && !this.state.registered ? <Tooltip title="Invite Patient">
                     <IconButton aria-label="message" sx={{ padding: '15px', marginTop: '10px', marginLeft: '15px' }} onClick={() => this.setState({ showInviteDialog: !this.state.showInviteDialog })}>
                         <PersonAddAltRoundedIcon color="action" fontSize="large"></PersonAddAltRoundedIcon>
                     </IconButton>
