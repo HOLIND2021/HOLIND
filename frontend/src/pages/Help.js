@@ -1,8 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { HelpData } from '../components/HelpData';
+import './Help.css';
+import Faq from 'react-faq-component';
 
 class Help extends Component {
-    state = {
-      data: null
+    
+    constructor(props) {
+      super(props);
+
+      this.state = {
+      }
     }
   
     componentDidMount() {
@@ -11,11 +18,12 @@ class Help extends Component {
   
   
     render() {
+
       return (
   
-        <div className='help'>
-            <h1>Help</h1>
-        </div>
+        <Fragment>
+          <Faq data={HelpData} styles={HelpData.styles} config={{animate: true}}/>
+        </Fragment>
         
       );
     }
