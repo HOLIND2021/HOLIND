@@ -1,6 +1,6 @@
 const { initializeApp } = require("firebase/app");
 const { getAuth, signInWithEmailAndPassword } = require("firebase/auth");
-const { getFirestore, collection, doc, getDoc, query, getDocs, setDoc, updateDoc, arrayUnion, arrayRemove } = require("firebase/firestore");
+const { getFirestore, collection, doc, getDoc, query, getDocs, addDoc, setDoc, updateDoc, arrayUnion, arrayRemove } = require("firebase/firestore");
 const firebaseConfig = {
     apiKey: process.env.apiKey,
     authDomain: process.env.authDomain,
@@ -78,6 +78,33 @@ exports.createUser = async (req, res, next) => {
     } else {
         res.status(500).json({
             message: "Error creating user document"
+        })
+    }
+}
+
+exports.createPatient = async (req, res, next) => {
+    const body = req.body;
+    const first = body.first;
+    const last = body.last;
+    const cuid = body.cuid;
+
+    const docRef = await addDoc(collection(db, 'patients'), {
+        first,
+        last,
+        cuid,
+        exercises: [],
+        registered: false
+    })
+
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        res.status(201).json({
+            body: docSnap.data()
+        })
+    } else {
+        res.status(500).json({
+            message: "Error creating patient"
         })
     }
 }

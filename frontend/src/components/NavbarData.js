@@ -3,7 +3,6 @@ import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 import * as BsIcons from 'react-icons/bs';
 import * as BiIcons from 'react-icons/bi';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 
 export const NavbarData = [
     {
@@ -22,7 +21,7 @@ export const NavbarData = [
     }, {
         title: 'Tasks',
         path: '/patient/',
-        icon: <AssignmentIcon />,
+        icon: <FaIcons.FaClipboardList />,
         cName: 'nav-text',
         role: 'patient'
     }, {
