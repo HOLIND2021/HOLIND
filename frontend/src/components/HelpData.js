@@ -1,5 +1,5 @@
 export const HelpData = {
-    "title": "FAQ title",
+    "title": "Frequently Asked Questions",
     "rows": [
         {
             "title": "Question 1",

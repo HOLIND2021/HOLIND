@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { HelpData } from '../components/HelpData';
 import './Help.css';
 import Faq from 'react-faq-component';
@@ -20,11 +20,9 @@ class Help extends Component {
     render() {
 
       return (
-  
-        <Fragment>
+        <div className="help">
           <Faq data={HelpData} styles={HelpData.styles} config={{animate: true}}/>
-        </Fragment>
-        
+        </div>
       );
     }
   }
