@@ -20,6 +20,7 @@ class Patients extends Component {
     showInviteDialog: false,
     invitePatient: null,
     inviteLink: '',
+    copied: false
   }
 
   componentDidMount() {
@@ -80,6 +81,12 @@ class Patients extends Component {
         .catch(err => console.log(err));
       }).catch((err) => console.log(err))
     }
+    
+    const copy = () => {
+      navigator.clipboard.writeText(this.state.inviteLink);
+      this.setState({ copied: true })
+    }
+
     return (
       <>
         <div className='patients'>
@@ -162,11 +169,12 @@ class Patients extends Component {
           <Dialog open={this.state.showInviteDialog && this.state.invitePatient}>
             <DialogTitle>Invite Patient</DialogTitle>
             <DialogContent>
-                <Typography>Send This Link to the New Patient: </Typography>
+                <Typography>Send This Signup Link to the New Patient: </Typography>
                 <Link underline="hover" to={{ pathname: this.state.inviteLink }} target="_blank">{this.state.inviteLink}</Link>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.setState({ showInviteDialog: !this.state.showInviteDialog })}>Close</Button>
+              <Button variant="contained" onClick={copy}>{!this.state.copied ? 'Copy URL' : 'Copied!'}</Button>
             </DialogActions>
           </Dialog>
         </div>

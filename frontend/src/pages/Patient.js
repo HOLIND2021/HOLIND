@@ -10,9 +10,11 @@ import VideoCameraBackIcon from '@mui/icons-material/VideoCameraBack';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
 import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
+import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
 import CalendarDate from '../components/CalendarDate';
 import ExerciseOptionsMenu from '../components/ExerciseOptionsMenu';
 import { firebaseAuth } from '../Firebase';
+import {Link} from 'react-router-dom';
 
 class Patient extends Component {
     state = {
@@ -21,10 +23,14 @@ class Patient extends Component {
         last: "",
         status: "",
         uid: "",
+        cuid: "",
         user: null,
         open: [true, true, true, true, true, false],
         showDialog: false,
-        caldate: ""
+        caldate: "",
+        registered: null,
+        showInviteDialog: false,
+        copied: false
     }
 
     constructor(props) {
@@ -54,7 +60,7 @@ class Patient extends Component {
         const res = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${this.props.match.params.uid}`);
         const body = await res.json();
         if (res.status === 200) {
-            this.setState({ exercises: body.body.exercises, first: body.body.first, last: body.body.last, status: body.body.status, caldate: body.body.caldate });
+            this.setState({ exercises: body.body.exercises, first: body.body.first, last: body.body.last, status: body.body.status, caldate: body.body.caldate, registered: body.body.registered, cuid: body.body.cuid });
         }
     }
 
@@ -96,6 +102,8 @@ class Patient extends Component {
                 value: "completed"
             }
         ]
+
+        const inviteLink = `https://holind-a4624.web.app/signup?pid=${this.state.uid}&cuid=${this.state.cuid}`;
 
         const handleOpen = async (index) => {
             let open = this.state.open;
@@ -172,6 +180,16 @@ class Patient extends Component {
             }).catch((err) => console.log(err))
         };
 
+        const copy = () => {
+            navigator.clipboard.writeText(inviteLink);
+            this.setState({ copied: true })
+        }
+
+        const handleClose = () => {
+            this.setState({ showInviteDialog: !this.state.showInviteDialog });
+            setTimeout(() => this.setState({ copied: false }), 500);
+        }
+
         return (
             <div className='patient'>
                 <Typography variant="h4" sx={{ fontWeight: "bold" }}>
@@ -190,6 +208,11 @@ class Patient extends Component {
                 {this.state.user.role !== 'patient' ? <Tooltip title="Patient Analytics">
                     <IconButton aria-label="message" sx={{ padding: '15px', marginTop: '10px', marginLeft: '15px' }}>
                         <AssessmentRoundedIcon color="action" fontSize="large"></AssessmentRoundedIcon>
+                    </IconButton>
+                </Tooltip> : ''}
+                {this.state.user.role !== 'patient' && !this.state.registered ? <Tooltip title="Invite Patient">
+                    <IconButton aria-label="message" sx={{ padding: '15px', marginTop: '10px', marginLeft: '15px' }} onClick={() => this.setState({ showInviteDialog: !this.state.showInviteDialog })}>
+                        <PersonAddAltRoundedIcon color="action" fontSize="large"></PersonAddAltRoundedIcon>
                     </IconButton>
                 </Tooltip> : ''}
                 <List
@@ -276,6 +299,17 @@ class Patient extends Component {
                     <DialogActions>
                         <Button onClick={() => this.setState({ showDialog: !this.state.showDialog })}>Cancel</Button>
                         <Button type="submit" variant="contained">Add Task</Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={this.state.showInviteDialog}>
+                    <DialogTitle>Invite Patient</DialogTitle>
+                    <DialogContent>
+                        <Typography>Send This Signup Link to {this.state.first + ' ' + this.state.last}: </Typography>
+                        <Link underline="hover" to={{ pathname: inviteLink }} target="_blank">{inviteLink}</Link>
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={handleClose}>Close</Button>
+                    <Button variant="contained" onClick={copy}>{!this.state.copied ? 'Copy URL' : 'Copied!'}</Button>
                     </DialogActions>
                 </Dialog>
             </div>
