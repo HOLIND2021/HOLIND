@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -28,13 +28,32 @@ function Copyright(props) {
 }
 
 const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const theme = createTheme();
 
 export default function LoginPage() {
+  const [pid, setPid] = React.useState(null);
+  const [patient, setPatient] = React.useState(null);
+
   let history = useHistory();
+  const { search } = useLocation();
+  let query = React.useMemo(() => new URLSearchParams(search), [search]);
+
+  useEffect(() => {
+    if (query.get("pid")) {
+      setPid(query.get("pid"));
+      async function getPatient() {
+        const res = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${query.get("pid")}`);
+        const body = await res.json();
+        if (res.status === 200) {
+          setPatient(body.body);
+        }
+      }
+      getPatient();
+    }
+  }, [pid, query])
 
   const [errorAlert, setErrorAlert] = React.useState(null);
 
@@ -50,39 +69,57 @@ export default function LoginPage() {
 
     if (password === passwordConfirm) {
       firebaseAuth.createUserWithEmailAndPassword(email, password)
-      .then(async (userCredential) => {
-        // Signed in 
-        const uid = userCredential.user.uid;
-  
-        await fetch(`${process.env.REACT_APP_API}/api/createUser`, {
+        .then(async (userCredential) => {
+          // Signed in 
+          const uid = userCredential.user.uid;
+
+          await fetch(`${process.env.REACT_APP_API}/api/createUser`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                uid,
-                firstName,
-                lastName
+              uid,
+              firstName: patient ? patient.first : firstName,
+              lastName: patient ? patient.last : lastName,
+              role: patient ? 'patient' : 'clinical',
+              pid: patient ? pid : null
             })
-        }).then((res) => console.log("User Document Created"))
-        .catch((err) => console.log(err))
-  
-        console.log('Account Created: ' + email)
-        history.push('/home')
-      })
-      .catch((error) => {
-        // Remove the text 'Firebase:' from the beginning of the error message 
-        setErrorAlert(String(error.message).slice(10));
-        console.log(error)
-      });
+          }).then(async (res) => {
+            console.log("User Document Created")
+            if (patient) {
+              await fetch(`${process.env.REACT_APP_API}/api/updatePatient`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  puid: pid,
+                  registered: true
+                })
+              })
+            }
+          })
+            .catch((err) => console.log(err))
+
+          console.log('Account Created: ' + email)
+          history.push('/home')
+        })
+        .catch((error) => {
+          // Remove the text 'Firebase:' from the beginning of the error message 
+          setErrorAlert(String(error.message).slice(10));
+          console.log(error)
+        });
     } else {
       setErrorAlert('Passwords do not match.')
     }
   };
 
+  if (query.get("pid") && !patient) return null;
+
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs" sx={{paddingTop: "50px"}}>
+      <Container component="main" maxWidth="xs" sx={{ paddingTop: "50px" }}>
         <CssBaseline />
         <Box
           sx={{
@@ -97,16 +134,18 @@ export default function LoginPage() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          {errorAlert ? <Alert severity="error" sx={{marginTop: "10px"}}>{errorAlert}</Alert> : ''}
+          {errorAlert ? <Alert severity="error" sx={{ marginTop: "10px" }}>{errorAlert}</Alert> : ''}
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
+            <TextField
               margin="normal"
               required
               fullWidth
               id="firstName"
               label="First Name"
               name="firstName"
+              defaultValue={patient?.first}
               autoFocus
+              disabled={pid !== null}
             />
             <TextField
               margin="normal"
@@ -115,6 +154,8 @@ export default function LoginPage() {
               id="lastName"
               label="Last Name"
               name="lastName"
+              defaultValue={patient?.last}
+              disabled={pid !== null}
             />
             <TextField
               margin="normal"
@@ -156,12 +197,12 @@ export default function LoginPage() {
           </Box>
         </Box>
         <Grid container justifyContent="flex-end">
-            <Grid item xs={4}/>
-            <Grid container item justifyContent="flex-end">
-                <Link href="/login" variant="body2">
-                    Already have an account? Sign In
-                </Link>
-            </Grid>
+          <Grid item xs={4} />
+          <Grid container item justifyContent="flex-end">
+            <Link href="/login" variant="body2">
+              Already have an account? Sign In
+            </Link>
+          </Grid>
         </Grid>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>

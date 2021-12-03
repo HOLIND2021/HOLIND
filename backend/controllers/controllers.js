@@ -62,11 +62,23 @@ exports.createUser = async (req, res, next) => {
     const uid = body.uid;
     const firstName = body.firstName;
     const lastName = body.lastName;
+    const role = body.role;
+    const pid = body.pid;
 
-    await setDoc(doc(db, "users", uid), {
-        firstName,
-        lastName
-    })
+    if (pid) {
+        await setDoc(doc(db, "users", uid), {
+            firstName,
+            lastName,
+            role,
+            pid
+        })
+    } else {
+        await setDoc(doc(db, "users", uid), {
+            firstName,
+            lastName,
+            role        
+        })
+    }
 
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
@@ -115,10 +127,17 @@ exports.updatePatient = async (req, res, next) => {
     const title = body.title;
     const status = body.status;
     const caldate = body.caldate;
+    const registered = body.registered;
 
-    await updateDoc(doc(db, "patients", uid), {
-        exercises: arrayUnion({name: title, due: caldate, status: status})
-    })
+    if (registered) {
+        await updateDoc(doc(db, "patients", uid), {
+            registered
+        })
+    } else {
+        await updateDoc(doc(db, "patients", uid), {
+            exercises: arrayUnion({name: title, due: caldate, status: status})
+        })
+    }
 
     const docRef = doc(db, "patients", uid);
     const docSnap = await getDoc(docRef);

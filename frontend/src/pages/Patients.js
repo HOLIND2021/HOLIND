@@ -75,7 +75,7 @@ class Patients extends Component {
           this.setState({ data: patients })
           let newPatient = patients.filter((patient) => patient.first === first && patient.last === last)[0];
           console.log(newPatient);
-          let inviteLink = `https://holind-a4624.web.app/signup?pid=${newPatient.uid}&cuid=${newPatient.cuid}`;
+          let inviteLink = `https://holind-a4624.web.app/signup?pid=${newPatient.uid}`;
           this.setState({ invitePatient: newPatient, showInviteDialog: true, inviteLink });
         })
         .catch(err => console.log(err));
