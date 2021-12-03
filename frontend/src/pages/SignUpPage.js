@@ -36,6 +36,7 @@ const theme = createTheme();
 export default function LoginPage() {
   const [pid, setPid] = React.useState(null);
   const [patient, setPatient] = React.useState(null);
+  const [patientFound, setPatientFound] = React.useState(true);
 
   let history = useHistory();
   const { search } = useLocation();
@@ -48,10 +49,19 @@ export default function LoginPage() {
         const res = await fetch(`${process.env.REACT_APP_API}/api/getPatient/${query.get("pid")}`);
         const body = await res.json();
         if (res.status === 200) {
+          setPatientFound(true);
           setPatient(body.body);
+          if (body.body.registered) {
+            setErrorAlert("Patient Already Registered, Please Sign In");
+          }
+        } else {
+          setPatient(null);
+          setPatientFound(false);
         }
       }
       getPatient();
+    } else {
+      setPatientFound(false);
     }
   }, [pid, query])
 
@@ -80,10 +90,10 @@ export default function LoginPage() {
             },
             body: JSON.stringify({
               uid,
-              firstName: patient ? patient.first : firstName,
-              lastName: patient ? patient.last : lastName,
-              role: patient ? 'patient' : 'clinical',
-              pid: patient ? pid : null
+              firstName: patientFound ? patient.first : firstName,
+              lastName: patientFound ? patient.last : lastName,
+              role: patientFound ? 'patient' : 'clinical',
+              pid: patientFound ? pid : null
             })
           }).then(async (res) => {
             console.log("User Document Created")
@@ -115,7 +125,7 @@ export default function LoginPage() {
     }
   };
 
-  if (query.get("pid") && !patient) return null;
+  if (query.get("pid") && !patient && patientFound ) return null;
 
   return (
     <ThemeProvider theme={theme}>
@@ -145,7 +155,7 @@ export default function LoginPage() {
               name="firstName"
               defaultValue={patient?.first}
               autoFocus
-              disabled={pid !== null}
+              disabled={patientFound}
             />
             <TextField
               margin="normal"
@@ -155,7 +165,7 @@ export default function LoginPage() {
               label="Last Name"
               name="lastName"
               defaultValue={patient?.last}
-              disabled={pid !== null}
+              disabled={patientFound}
             />
             <TextField
               margin="normal"
@@ -191,6 +201,7 @@ export default function LoginPage() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={patient?.registered}
             >
               Create Account
             </Button>
