@@ -103,7 +103,7 @@ class Patient extends Component {
             }
         ]
 
-        const inviteLink = `https://holind-a4624.web.app/signup?pid=${this.state.uid}&cuid=${this.state.cuid}`;
+        const inviteLink = `https://holind-a4624.web.app/signup?pid=${this.state.uid}`;
 
         const handleOpen = async (index) => {
             let open = this.state.open;
