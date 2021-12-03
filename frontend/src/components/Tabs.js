@@ -46,7 +46,7 @@ function a11yProps(index) {
   };
 }
 
-export default function BasicTabs({ data, role, pid }) {
+export default function BasicTabs({ data, role, pid, uid }) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -72,7 +72,7 @@ export default function BasicTabs({ data, role, pid }) {
       return exercise;
     })
   } else {
-    data.map((patient) => {
+    data?.map((patient) => {
       earliestTask = patient?.exercises?.filter(task => task.due && task.status !== "completed").sort((a,b) => (a.due > b.due) ? 1 : (b.due > a.due) ? -1 : 0)[0];
       patient.earliestTask = earliestTask;
       if (earliestTask) {
@@ -112,7 +112,7 @@ export default function BasicTabs({ data, role, pid }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {role !== 'patient' ? array.map((patient) => (
+                {role !== 'patient' ? array.filter((patient) => patient.cuid === uid).map((patient) => (
                   <TableRow
                     key={patient.first}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 }, textDecoration: "none" }}

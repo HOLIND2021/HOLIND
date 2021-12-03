@@ -14,7 +14,7 @@ import { firebaseAuth } from '../Firebase';
 
 class Patients extends Component {
   state = {
-    data: [],
+    data: null,
     showDialog: false,
     user: null,
     showInviteDialog: false,
@@ -87,6 +87,8 @@ class Patients extends Component {
       this.setState({ copied: true })
     }
 
+    if (!this.state.user || !this.state.data) return null;
+    
     return (
       <>
         <div className='patients'>
@@ -94,6 +96,8 @@ class Patients extends Component {
           <Button variant="outlined" sx={{ float: 'right', display: 'inline-block' }} onClick={() => this.setState({ showDialog: !this.state.showDialog })}>
             Add Patient
           </Button>
+          {this.state.data?.filter((patient) => patient.cuid === this.state.user?.uid).length === 0 ? 
+          <Typography style={{paddingTop: "10px"}}>You currently have no patients, please add a new patient with the button at the top right.</Typography> :
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
@@ -104,7 +108,7 @@ class Patients extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.state.data.map((patient) => {
+                {this.state.data?.filter((patient) => patient.cuid === this.state.user?.uid ).map((patient) => {
                   let earliestTask = patient?.exercises?.filter(task => task.due && task.status !== "completed").sort((a, b) => (a.due > b.due) ? 1 : (b.due > a.due) ? -1 : 0)[0];
                   let status = "";
                   if (earliestTask) {
@@ -139,7 +143,7 @@ class Patients extends Component {
                 })}
               </TableBody>
             </Table>
-          </TableContainer>
+          </TableContainer>}
           <Dialog open={this.state.showDialog} component="form" onSubmit={handleSubmit}>
             <DialogTitle>Add Patient</DialogTitle>
             <DialogContent>

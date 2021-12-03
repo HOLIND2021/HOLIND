@@ -102,7 +102,7 @@ class Home extends Component {
           <br></br>
           <br></br>
           <Typography variant="h4" fontWeight="bold">{this.state.title}</Typography><br></br>
-          <Tabs data={this.state.data} role={this.state.role} pid={this.state.pid}></Tabs>
+          { this.state.data.length > 0 ? <Tabs data={this.state.data} role={this.state.role} pid={this.state.pid} uid={this.state.uid}></Tabs> : ''}
         </div>
       </div>
     );
